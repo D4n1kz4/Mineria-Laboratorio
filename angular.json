@@ -84,10 +84,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "grupo_mexico:build:production"
+              "buildTarget": "grupo_mexico:build:production"
             },
             "development": {
-              "browserTarget": "grupo_mexico:build:development"
+              "buildTarget": "grupo_mexico:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -95,7 +95,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "grupo_mexico:build"
+            "buildTarget": "grupo_mexico:build"
           }
         },
         "test": {
