@@ -14,7 +14,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { DataTablesModule } from 'angular-datatables';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -26,38 +26,28 @@ import { LaboratorioComponent } from './pages/laboratorio/laboratorio.component'
 
 
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    HeaderComponent,
-    LoginComponent,
-    AdministracionComponent,
-    CostadonaveComponent,
-    NominacionesComponent,
-    RecepciondepilaComponent,
-    RegistrarcamionComponent,
-    ClienteComponent,
-    LaboratorioComponent,
-
-
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatIconModule,
-    ReactiveFormsModule,
-    RouterModule,
-    HttpClientModule,
-    DataTablesModule,
-    FormsModule,
-    NgbModule,
-    MatProgressBarModule,
-    NgxExtendedPdfViewerModule,
-    NgChartsModule,
-
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        HeaderComponent,
+        LoginComponent,
+        AdministracionComponent,
+        CostadonaveComponent,
+        NominacionesComponent,
+        RecepciondepilaComponent,
+        RegistrarcamionComponent,
+        ClienteComponent,
+        LaboratorioComponent,
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatIconModule,
+        ReactiveFormsModule,
+        RouterModule,
+        DataTablesModule,
+        FormsModule,
+        NgbModule,
+        MatProgressBarModule,
+        NgxExtendedPdfViewerModule,
+        NgChartsModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule { }
