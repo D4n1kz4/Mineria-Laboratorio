@@ -1,0 +1,522 @@
+<app-header></app-header>
+<div class="contenedor">
+    <div class="row">
+        <div class="col" style="margin-top: 5px;">
+            <h2 style="color:rgb(106,115,123);">{{cargo}}: {{nombre}} {{apellido}}</h2>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="d-flex mb-8" style="gap: 10px; margin-bottom: 10px;">
+            <button type="button" class="btn btn-secondary" style="font-weight: 400;"
+                (click)="setActiveButton('Ingresar resultado costado nave', 'muestracostadonave')"
+                [class.active]="isButtonActive('Ingresar resultado costado nave', 'muestracostadonave')">INGRESAR RESULTADO</button>
+            <button type="button" class="btn btn-secondary" style="font-weight: 400;"
+                (click)="setActiveButton('Listar resultados', 'listarresultados')"
+                [class.active]="isButtonActive('Listar resultadose', 'listarresultados')">LISTAR RESULTADOS</button>    
+            <button type="button" class="btn btn-secondary" style="font-weight: 400;"
+                (click)="setActiveButton('Ver Indicadores', 'indicadores')"
+                [class.active]="isButtonActive('Ver Indicadores', 'indicadores')">INDICADORES</button>            
+        </div>        
+    </div>
+
+    <div  class="row" *ngIf="activeDiv === 'muestracostadonave'">
+        <div class="col-4">
+            <label for="exampleDataList" class="form-label" style="color:rgb(106,115,123);">Selecciona N° Nominación</label>
+            <div class="input-group custom-input">
+                <select class="form-select" aria-label="Default select example" [(ngModel)]="nominacionNave" (change)="onInput()">
+                    <option *ngFor="let nominacion of nominacionesBDNave" [value]="nominacion.numeroNominacion">{{nominacion.numeroNominacion}}</option>
+                </select>
+                <button type="button" class="btn btn-secondary" (click)="cleanNave()">Limpiar</button>
+            </div>        
+            <div style="margin-top: 20px;" *ngIf="lotesNave && lotesNave.length > 0">
+                <table datatable [dtOptions]="dtOptionsLotesNave" class="table table-striped table-bordered row-border hover custom-table">
+                    <thead>
+                        <tr>
+                            <th>LOTE</th>
+                            <th>PRODUCTO</th>
+                            <th>TONELAJE</th>
+                            <th>AGREGAR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let l of lotesNave; let i = index">
+                            <td>{{l.orden}}</td>
+                            <td>{{l.producto}}</td>
+                            <td>{{l.tonelaje}}</td>
+                            <td>
+                                <button type="button" class="btn btn-secondary btn-sm" style="font-size: 1.2em;" (click)="openResultadoNave(modalCostadoNave, l.idLote, l.orden)">Resultado</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>            
+        </div>
+        <div class="col-8" style="margin-top: 20px; max-height: 400px; overflow-y:auto;" *ngIf="lotesNaveResultado && lotesNaveResultado.length > 0">
+            <label for="exampleDataList" class="form-label" style="color:rgb(106,115,123);">Lote: {{orden}}</label>
+            <table datatable [dtOptions]="dtOptionsLotesNaveResultado" class="table table-striped table-bordered row-border hover table-custom" style="font-size: 0.85em;">
+                <thead class="sticky-header">
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 11%;">SELLO</th>
+                        <th style="width: 11%;">SELLO REEMP.</th>
+                        <th style="width: 11%;">WMT</th>
+                        <th style="width: 11%;">% HUMEDAD</th>
+                        <th style="width: 11%;">MT HUMEDAD</th>
+                        <th style="width: 11%;">DMT</th>
+                        <th style="width: 17%;">FECHA</th>
+                        <th style="width: 17%;">ESTADO</th>
+                        <th style="width: 8%;">EDITAR</th>
+                        
+                    
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let l of lotesNaveResultado; let i = index">
+                        <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ i + 1 }}</td>
+                        <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ l.sello }}</td>
+                        <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ l.selloreemplazo }}</td>
+                        <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{l.wmt | number:'1.2-3'}}</td>
+                        <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{l.moisture | number:'1.5-5'}}</td>
+                        <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{l.mt | number:'1.2-3'}}</td>
+                        <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{l.dmt | number:'1.2-3'}}</td>
+                        <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{l.fechaMuestreo}}</td>
+                        <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{l.estado}}</td>
+                        <td style="text-align: center; vertical-align: middle;" [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">
+                            
+                        <button style="margin-top: 5px; margin-right: 5px;" *ngIf="!existenAdjuntos" type="button" class="btn btn-secondary btn-sm" (click)="editarResultadoNave(modalEditResCostadoNave, l.idCostadonave)"><mat-icon>edit</mat-icon></button>
+                        <button style="margin-top: 5px;" *ngIf="!existenAdjuntos" type="button" class="btn btn-secondary btn-sm" (click)="eliminarResultadoNave(modalEliminarResultadosNave, l.idCostadonave)"><mat-icon>delete</mat-icon></button>
+                        <button style="margin-top: 5px; margin-right: 5px;" *ngIf="existenAdjuntos" type="button" class="btn btn-secondary btn-sm" [disabled]="estadosPorFilaAdjuntos[idLote] !== 'Aprobado'" (click)="editarResultadoNave(modalEditResCostadoNave, l.idCostadonave)"><mat-icon>edit</mat-icon></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div  class="row" *ngIf="activeDiv === 'listarresultados'">
+        <div class="col-4">
+            <label for="exampleDataList" class="form-label" style="color:rgb(106,115,123);">Selecciona N° Nominación</label>
+            <div class="input-group custom-input8">
+                <select class="form-select" aria-label="Default select example" [(ngModel)]="nominacionNaveListar" (change)="onInputListar()">
+                    <option *ngFor="let nominacion of nominacionesBDNaveListar" [value]="nominacion.numeroNominacion">{{nominacion.numeroNominacion}}</option>
+                </select>
+                <button type="button" class="btn btn-secondary btn-lm" (click)="cleanNaveListar()">Limpiar</button>
+            </div>
+            <div style="margin-top: 20px;" *ngIf="lotesNaveListar && lotesNaveListar.length > 0">
+                <table datatable [dtOptions]="dtOptionsLotesNaveListar" class="table table-striped table-bordered row-border hover table-custom">
+                    <thead>
+                        <tr>
+                            <th>LOTE</th>
+                            <th>PRODUCTO</th>
+                            <th>TONELAJE</th>
+                            <th>ACCIÓN</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let l of lotesNaveListar; let i = index">
+                            <td>{{l.orden}}</td>
+                            <td>{{l.producto}}</td>
+                            <td>{{l.tonelaje}}</td>
+                            <td>
+                                <button type="button" class="btn btn-secondary btn-sm" (click)="listarResultadoNave(l.idLote, l.orden)">Listar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>            
+        </div>
+        <div class="col-8" style="max-height: 400px; overflow-y:auto;">
+            <div *ngIf="lotesNaveListarResultados && lotesNaveListarResultados.length > 0">
+               <div style="display: flex; align-items: center;">
+                <div style="margin-left: 10px; margin-right: 20px;" *ngIf="existenAdjuntos;">
+                    <button type="button" class="btn btn-secondary btn-lm" (click)="solicitarVistaCliente(idLote)" 
+                    [disabled]="estadoVistacliente[idLote] === 'Pendiente' || estadoVistacliente[idLote] === 'Aprobado' ">
+                    Vista cliente: {{estadoVistacliente[idLote] || 'Solicitar' }}</button>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-secondary btn-sn" (click)="exportToExcel(lotesNaveListarResultados, 'resultados_lotes')">Exportar a Excel</button>
+                </div>
+                <table style="margin-left: 20px; width: 70%;" datatable [dtOptions]="dtOptionsAdjuntarPDF" class="table table-striped table-bordered row-border hover table-custom">
+                    <thead>
+                        <tr>
+                            <th>LOTE</th>
+                            <th>ADJUNTOS</th>
+                            <th>ACCIÓN</th>
+                            <th>SOLICITAR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{orden}}</td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <ng-container *ngIf="existenAdjuntos; else noAdjuntos">
+                                    <i class="fa-solid fa-eye" style="font-size: 1.8em; cursor: pointer;" (click)="openAdjuntos(modalVerAdjuntos, idLote)"></i>
+                                </ng-container>
+                                <ng-template #noAdjuntos>No hay archivos adjuntos</ng-template>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <ng-container *ngIf="existenAdjuntos; else agregarAdjuntos">
+                                    <button type="button" class="btn btn-danger btn-sm" [disabled]="estadosPorFilaAdjuntos[idLote] !== 'Aprobado'" (click)="eliminarAdjuntos(modalEliminarAdjuntos, idLote)">Eliminar Adjuntos</button>
+                                </ng-container>
+                                <ng-template #agregarAdjuntos>
+                                    <button type="button" class="btn btn-secondary btn-sm" (click)="adjuntar(modalAdjuntar, idLote)">Adjuntar</button>
+                                </ng-template>
+                            </td>
+                            <td  style="text-align: center; vertical-align: middle;">
+                                <ng-container *ngIf="existenAdjuntos; else mensajeAdjuntos">
+                                    <button type="button" class="btn btn-secondary btn-sm"                          
+                                        (click)="solicitarEdicion(0, idLote, idLote)"
+                                        [disabled]="estadosPorFilaAdjuntos[idLote] === 'Pendiente' || estadosPorFilaAdjuntos[idLote] === 'Aprobado' ">
+                                        {{ estadosPorFilaAdjuntos[idLote] || 'Solicitar Edición' }}
+                                    </button>
+                                </ng-container>
+                                <ng-template #mensajeAdjuntos>Solicitud de edición no disponible</ng-template> 
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+               </div>
+                <br>
+                <table datatable [dtOptions]="dtOptionsLotesNaveResultadosListados" class="table table-striped table-bordered row-border hover table-custom">
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>SELLO</th>
+                            <th>SELLO REEMP.</th>
+                            <th>WMT</th>
+                            <th>% HUMEDAD</th>
+                            <th>MT HUMEDAD</th>
+                            <th>DMT</th>
+                            <th>FECHA</th>
+                            <th>ESTADO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let l of lotesNaveListarResultados; let i = index">
+                            <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ i + 1 }}</td>
+                            <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ l.sello }}</td>
+                            <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ l.selloreemplazo }}</td>
+                            <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ l.wmt | number:'1.3-3'}}</td>
+                            <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ l.moisture | number:'1.5-5'}}</td>
+                            <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ l.mt| number:'1.3-3'}}</td>
+                            <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ l.dmt| number:'1.3-3'}}</td>
+                            <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ l.fechaMuestreo }}</td>
+                            <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ l.estado  }}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3">Total</th>
+                            <th>{{ totalWMT | number:'1.3-3' }}</th>
+                            <th>{{ totalPorcentajeHumedad }}</th>
+                            <th>{{ totalMTHumedad | number:'1.3-3' }}</th>
+                            <th>{{ totalDMT | number:'1.3-3' }}</th>
+                            <th colspan="2"></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div> 
+            <div style="margin-top: 20px; margin-left: 50px; width: 60%;" *ngIf="loteSeleccionado && (!lotesNaveListarResultados || lotesNaveListarResultados.length === 0)">
+                <div class="alert alert-info" role="alert">
+                    No hay resultados ingresados.
+                </div>
+            </div>             
+        </div>     
+    </div>
+
+
+    <div  class="row" *ngIf="activeDiv === 'indicadores'">
+        <div class="col-5">
+            <label for="exampleDataList" class="form-label" style="color:rgb(106,115,123);">Selecciona N° Nominación</label>
+            <div class="input-group custom-input2">
+                <select class="form-select" aria-label="Default select example" [(ngModel)]="nominacionNaveListarIndicadores" (change)="onInputListarIndicadores()">
+                    <option *ngFor="let nominacion of nominacionesBDNaveListar" [value]="nominacion.numeroNominacion">{{nominacion.numeroNominacion}}</option>
+                </select>
+                <button type="button" class="btn btn-secondary" (click)="cleanNaveListarIndicadores()">Limpiar</button>
+            </div>            
+            <div style="margin-top: 20px; max-height: 200px; overflow-y:auto; width: 70%;" *ngIf="lotesNaveListarIndicadores && lotesNaveListarIndicadores.length > 0">
+                <label for="exampleDataList" class="form-label" style="color:rgb(106,115,123);">Cantidad de lotes: {{lotesNaveListarIndicadores.length}}</label>
+                <table datatable [dtOptions]="dtOptionsLotesNaveListarIndicadores" class="table table-striped table-bordered row-border hover table-custom">
+                    <thead class="sticky-header">
+                        <tr>
+                            <th>LOTE</th>
+                            <th>PRODUCTO</th>
+                            <th>TONELAJE</th>
+                            <th>ACCIÓN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let l of lotesNaveListarIndicadores; let i = index">
+                            <td>{{l.orden}}</td>
+                            <td>{{l.producto}}</td>
+                            <td>{{l.tonelaje}}</td>
+                            <td>
+                                <button type="button" class="btn btn-secondary btn-sm" (click)="listarResultadoNaveIndicadores(l.idLote,l.orden)">Listar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div> 
+            <div *ngIf="lotesNaveListarResultadosIndicadores && lotesNaveListarResultadosIndicadores.length">                
+                <div class="row">
+                    <div class="col-md-12 mt-0">
+                        <div class="card">
+                            <div style="flex: 1; display: flex; flex-wrap: wrap;">
+                            <label for="exampleDataList" class="form-label" style="color: rgb(0, 76, 171); margin-left: 10px; margin-top: 10px;">Lote: {{orden}}</label>
+                            </div>
+                            <div class="container">
+                            <div class="item">
+                                <span><i class="fas fa-droplet custom-droplet"></i></span>
+                                <span class="cantidad">{{totalWMT | number:'1.3-3'}}</span>
+                                <span class="nombre">WMT</span>
+                            </div>
+                            <div class="item">
+                                <span><i class="fas fa-droplet custom-droplet1"></i></span>
+                                <span class="cantidad">{{totalPorcentajeHumedad | number:'1.5-5'}}</span>
+                                <span class="nombre">% humedad</span>
+                            </div>
+                            <div class="item">
+                                <span><i class="fas fa-droplet custom-droplet2"></i></span>
+                                <span class="cantidad">{{totalMTHumedad | number:'1.3-3'}}</span>
+                                <span class="nombre">MT</span>
+                            </div>
+                            <div class="item">
+                                <span><i class="fa-solid fa-weight-hanging custom-droplet3"></i></span>
+                                <span class="cantidad">{{totalDMT | number:'1.3-3'}}</span> 
+                                <span class="nombre">DMT</span>
+                            </div>
+                            </div> 
+                            <br>
+                        </div>
+                    </div>
+                </div>            
+            </div>                       
+        </div>
+        <div class="col">
+            <div  style="margin-top: 20px; max-height: 400px; overflow-y: auto;" *ngIf="lotesNaveListarResultadosIndicadores && lotesNaveListarResultadosIndicadores.length > 0">
+                <label for="exampleDataList" class="form-label" style="color:rgb(106,115,123);">Cantidad de resultados: {{lotesNaveListarResultadosIndicadores.length}}</label>
+                <table datatable [dtOptions]="dtOptionsLotesNaveResultadosListadosIndicadores" class="table table-striped table-bordered row-border hover table-custom">
+                    <thead class="sticky-header">
+                        <tr>
+                            <th>N°</th>
+                            <th>WMT</th>
+                            <th>% HUMEDAD</th>
+                            <th>MT HUMEDAD</th>
+                            <th>DMT</th>
+                            <th>ESTADO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let l of lotesNaveListarResultadosIndicadores; let i = index">
+                            <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ i + 1 }}</td>
+                            <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ l.wmt | number:'1.3-3'}}</td>
+                            <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ l.moisture | number:'1.5-5'}}</td>
+                            <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ l.mt | number:'1.3-3'}}</td>
+                            <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ l.dmt | number:'1.3-3'}}</td>
+                            <td [ngClass]="{'estado-aprobado': l.estado === 'Aprobado', 'estado-rechazado': l.estado === 'Rechazado'}">{{ l.estado }}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Total</th>
+                            <th>{{ totalWMT | number:'1.3-3'}}</th>
+                            <th>{{ totalPorcentajeHumedad | number:'1.5-5'}}</th>
+                            <th>{{ totalMTHumedad | number:'1.3-3'}}</th>
+                            <th>{{ totalDMT | number:'1.3-3'}}</th>
+                            <th colspan="1"></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div style="margin-top: 20px; margin-left: 50px; width: 60%;" *ngIf="loteSeleccionado && (!lotesNaveListarResultadosIndicadores || lotesNaveListarResultadosIndicadores.length === 0)">
+                <div class="alert alert-info" role="alert">
+                    No hay resultados ingresados.
+                </div>
+            </div>      
+        </div>
+    </div>
+
+</div>
+
+<ng-template #modalCostadoNave let-modal>
+    <div class="modal-header">
+        <div class="modal-title"style="color:rgb(106,115,123);">Ingresar resultado sub lotes  :{{orden}} </div>
+        <mat-icon style="color: white; background-color: gray; border-radius: 50%;" (click)="closeModalResulCostadoNave()">close</mat-icon> 
+    </div>
+    <form style="margin-top: 10px;" [formGroup]="frmResultMuestraNave" (ngSubmit)="addResultadoNave()" enctype="multipart/form-data">
+        <div class="modal-body">
+            <div class="form-floating mb-2">
+                <input type="date" class="form-control custom-input3" formControlName="fechaMuestreo" id="floatingInput12">
+                <label for="floatingInput12">Fecha: </label>
+            </div>
+            <div class="form-floating mb-2">
+                <input type="text" class="form-control custom-input3" formControlName="sello" id="floatingInput68">
+                <label for="floatingInput68">Sello: </label>
+            </div>
+            <label style="color:rgb(106,115,123);">Sello Reemplazo: </label>
+            <div style="display: flex; gap: 0.5em; margin-top: 10px;">
+                <input class="input-radio-r mb-3" value="1" formControlName="selloRemplazo" type="radio" [checked]="frmResultMuestraNave.get('selloRemplazo')?.value === '1'" (click)="onSelloRemplazoChange('1')"><label style="cursor:pointer;">No</label>
+                <input class="input-radio-r mb-3" type="radio" value="2" formControlName="selloRemplazo" [checked]="frmResultMuestraNave.get('selloRemplazo')?.value === '2'" (click)="onSelloRemplazoChange('2')">
+                <label style="cursor:pointer;">Sí</label>
+            </div>
+            <div class="form-floating mb-2" *ngIf="frmResultMuestraNave.get('selloRemplazo')?.value === '2'">
+                <input type="text" class="form-control custom-input3" formControlName="selloreemplazo" id="floatingInput689">
+                <label for="floatingInput689">Sello Reemplazo: </label>
+            </div>
+            <div class="form-floating mb-2">
+                <input type="number" class="form-control custom-input3" formControlName="wmt" id="floatingInput6">
+                <label for="floatingInput6">WMT: </label>
+            </div>
+            <div class="form-floating mb-2">
+                <input type="number" class="form-control custom-input3" formControlName="moisture" id="floatingInput7">
+                <label for="floatingInput7">Moisture %: </label>
+            </div>
+            <div class="form-floating mb-2">
+                <input type="number" class="form-control custom-input3" formControlName="mt" id="floatingInput8">
+                <label for="floatingInput8">Moisture MT: </label>
+            </div>
+            <div class="form-floating mb-2" style="margin-top: 10px;">
+                <input type="number" class="form-control custom-input3" formControlName="dmt" id="floatingInput3">
+                <label for="floatingInput3">DMT: </label>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-secondary btn-sm" [disabled]="!allFieldsSelected()">Guardar</button>
+            </div>
+        </div>
+    </form>
+</ng-template>
+       
+
+
+<ng-template #modalEditResCostadoNave let-modal>
+    <div class="modal-header">
+        <div class="modal-title">Editar resultado costado de nave.</div>
+        <mat-icon style="color: white; background-color: gray; border-radius: 50%;" (click)="closeModalEditCostadoNave()">close</mat-icon>
+    </div>
+    <form [formGroup]="frmEditResCostadoNave" (ngSubmit)="editResCostadoNave()">
+        <div class="modal-body">
+            <div class="form-floating mb-2">
+                <input type="date" class="form-control custom-input3" formControlName="fechaMuestreoEdit" id="floatingInput122">
+                <label for="floatingInput122">FRCHA: </label>
+            </div>
+            <div class="form-floating mb-2">
+                <input type="text" class="form-control custom-input3" formControlName="selloEdit" id="floatingInput688">
+                <label for="floatingInput688">Sello: </label>
+            </div>
+            <label style="color:rgb(106,115,123);">Sello Reemplazo: </label>
+            
+            <div class="form-floating mb-2">
+                <input type="text" class="form-control custom-input3" formControlName="selloreemplazoEdit" id="floatingInput6898">
+                <label for="floatingInput6898">Sello Reemplazo: </label>
+            </div>
+            <div class="form-floating mb-2">
+                <input type="number" class="form-control custom-input3" formControlName="wmtEdit" id="floatingInput666">
+                <label for="floatingInput666">WMT: </label>
+            </div>
+            <div class="form-floating mb-2">
+                <input type="float" class="form-control custom-input3" formControlName="moistureEdit" id="floatingInput777">
+                <label for="floatingInput777">MOISTURE %: </label>
+            </div>
+            <div class="form-floating mb-2">
+                <input type="number" class="form-control custom-input3" formControlName="mtEdit" id="floatingInput888">
+                <label for="floatingInput888">MOISTURE MT: </label>
+               
+            </div>
+            <div class="form-floating mb-2" style="margin-top: 10px;">
+                <input type="number" class="form-control custom-input3" formControlName="dmtEdit" id="floatingInput333">
+                <label for="floatingInput333">DMT: </label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-secondary btn-sm" [disabled]="frmEditResCostadoNave.invalid">Editar</button>
+        </div>
+    </form>
+</ng-template>
+
+
+<ng-template #modalOpenPDF let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">Visor de PDF</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  
+    <div class="modal-body">
+      <ngx-extended-pdf-viewer 
+      [src]="pdfPath" [filenameForDownload]="'documento.pdf'" 
+      [style.height.px]="400"
+      [height]="'60vh'"
+      [showOpenFileButton]="false"
+      [textLayer]="true"
+      ></ngx-extended-pdf-viewer>
+    </div>
+  </ng-template>
+
+  <ng-template #modalAdjuntar let-modal>
+    <form [formGroup]="frmAdjuntarPDF" (ngSubmit)="adjuntarPDF()" enctype="multipart/form-data">
+        <div class="modal-header">
+            <div class="modal-title">Ajuntar PDF</div>
+            <mat-icon style="color: white; background-color: gray; border-radius: 50%;" (click)="closemodalAdjuntar()">close</mat-icon>
+        </div>
+        <div class="modal-body">
+            <div class="form-floating mb-2">
+                <input type="file" class="form-control custom-input3" formControlName="informeResultados" id="formFileInforme1" (change)="onInformeSelected($event, 'informeResultados')">
+                <label for="formFileInforme1">Informe Resultado</label>
+            </div>
+            <div class="form-floating mb-2">
+                <input type="file" class="form-control custom-input3" formControlName="informeSellos" id="formFileInforme3" (change)="onInformeSelected($event, 'informeSellos')">
+                <label for="formFileInforme3">Informe Sellofa-spin</label>
+            </div>
+            <div *ngIf="archivoSeleccionadoFlag">
+                <strong>Nombre:</strong> {{ archivoSeleccionado?.name }}
+                <mat-icon style="color: white; background-color: gray; border-radius: 50%;" (click)="eliminarArchivo('informeResultados')">close</mat-icon>
+              </div>
+            <div *ngIf="archivoSeleccionadoTresFlag">
+                <strong>Nombre:</strong> {{ archivoSeleccionadoTres?.name }}
+                <mat-icon style="color: white; background-color: gray; border-radius: 50%;" (click)="eliminarArchivo('informeSellos')">close</mat-icon>
+            </div>
+        </div>
+        <div class="modal-footer">
+        <button type="submit" class="btn btn-secondary btn-sm" [disabled]="frmAdjuntarPDF.invalid">Agregar</button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #modalVerAdjuntos let-modal>
+    <div class="modal-header">
+        <div class="modal-title">Archivos Adjuntos</div>
+        <mat-icon style="color: white; background-color: gray; border-radius: 50%;" (click)="modal.close()">close</mat-icon>
+    </div>
+    <div class="modal-body adjuntos-body">
+        <div class="adjuntos-item">
+            <label for="informeResultados" class="adjuntos-label">INFORME DE RESULTADO</label>
+            <button class="adjuntos-button" (click)="openPDF(modalOpenPDF, informeResultadosPath)">Ver PDF</button>
+        </div>
+        <div class="adjuntos-item">
+            <label for="informeSellos" class="adjuntos-label">INFORME DE SELLOS</label>
+            <button class="adjuntos-button" (click)="openPDF(modalOpenPDF, informeSellosPath)">Ver PDF</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalEliminarAdjuntos let-modal>
+    <div class="modal-body">
+        ¿Eliminar los archivos adjuntos?
+    </div>
+    <div class="modal-footer mx-auto">
+        <button type="button" class="btn btn-success" (click)="closeModalRemoveAdjuntos()">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="removeAdjuntos()">Eliminar</button>
+    </div>
+</ng-template>
+
+<ng-template #modalEliminarResultadosNave let-modal>
+    <div class="modal-body">
+        ¿Eliminar el resultado?
+    </div>
+    <div class="modal-footer mx-auto">
+        <button type="button" class="btn btn-success" (click)="closeModalRemoveResultadosNave()">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="removeResultadosNave()">Eliminar</button>
+    </div>
+</ng-template>

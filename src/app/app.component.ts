@@ -7,4 +7,6 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'grupo_mexico';
+  onFileComplete(data: any){
+  }
 }

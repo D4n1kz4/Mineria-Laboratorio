@@ -1,0 +1,41 @@
+<div class="menu-header">
+  <div class="row">
+    <div class="col-1">
+      <img src="../../../assets/logoals.png" alt="LogoALS">
+    </div>
+    <div class="col-11">
+      <nav class="navbar navbar-expand-lg">
+        <img src="../../../assets/header.png" alt="LogoGM">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon text-white"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item" *ngIf="getIdCargo() === 1 || getIdCargo() === 2">
+              <a class="nav-link" href="/nominaciones">NOMINACIÓN</a>
+            </li>
+            <li class="nav-item" *ngIf="getIdCargo() === 1 || getIdCargo() === 2"> 
+              <a class="nav-link" href="/recepciondepila">TOMA DE PILA</a>
+            </li>
+            <li class="nav-item" *ngIf="getIdCargo() === 1 || getIdCargo() === 2"> 
+              <a class="nav-link" href="/laboratorio">LABORATORIO</a>
+            </li>
+            <li class="nav-item" *ngIf="getIdCargo() === 1 || getIdCargo() === 2">
+              <a class="nav-link" href="/registrarcamion">REGISTRO DE CAMIÓN</a>
+            </li>
+            <li class="nav-item" *ngIf="getIdCargo() === 1 || getIdCargo() === 2">
+              <a class="nav-link" href="/costadonave">COSTADO DE NAVE</a>
+            </li>
+            <li class="nav-item" *ngIf="getIdCargo() === 1">
+              <a class="nav-link" href="/administrador">ADMINISTRACIÓN</a>
+            </li>
+          </ul>
+          <span class="navbar-text ms-auto salir">
+            <button type="button" class="btn btn-secondary bnHeader" (click)="salir()">SALIR</button>
+          </span>
+        </div>
+      </nav>
+    </div>    
+  </div>    
+</div>

@@ -1,0 +1,78 @@
+/* Encabezado de la Tabla */
+.table-custom thead th {
+    background-color:  rgb(6,81,163);
+    font-weight: 500;
+    color: white;
+    border: 1px solid #ddd;
+  }
+
+/* Hace que la cabecera de la tabla sea estatica */
+  .sticky-header th {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 10;
+  }
+
+  .custom-input {
+    width: 73%;
+  }
+
+  .custom-input1 {
+    width: 50%;
+  }
+
+  .ustom-inputIMO{
+    width: 50%;
+  }
+
+  .btn-extra-sm {
+    padding: 7px 7px; 
+    font-size: 0.8rem; 
+    line-height: 1;
+  }
+
+  .modal-header{
+    background-color:  rgb(6,81,163);
+    color: white;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button, 
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: none;
+}
+
+.estado-ok {
+  background-color: #8bc34a; /* Verde */
+}
+
+.estado-no {
+  background-color: #f44336; /* Rojo */
+}
+
+.input-insert {
+  width: 80px;
+  border: 1px solid #676869;
+}
+
+input-insert-calidad {
+  width: 100px;
+  border: 1px solid #676869;
+}
+
+
+.input-insert-body {
+  font-size: 0.85em;
+  font-weight: bold;
+}
+
+.repetido td {
+  border: 2px solid #AB7CC8;
+}
+

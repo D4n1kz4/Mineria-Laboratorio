@@ -1,0 +1,30 @@
+<div class="fondo">
+    <div class="card">
+        <div>
+            <img src="../../../assets/principal.png" alt="Logo">
+        </div>
+        <form [formGroup]="formLogin" (ngSubmit)="login()" >
+            <div class="col-12 text-center mb-2" style="margin-bottom:0px!important;">
+                <h4>Inicio de Sesión</h4>
+            </div>
+            <div class="col-12">
+                <div class="mb-2">
+                    <label class="form-label">Correo</label>
+                    <input type="text" formControlName="correo" placeholder="inspecto@alsglobal.com" autocomplete="username">
+
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="mb-2">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" formControlName="password" placeholder="***************" autocomplete="current-password">
+
+                </div>
+            </div>
+            <br>
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-danger btn-sm custom-btn" [disabled]="formLogin.invalid">Ingresar</button>
+            </div>
+        </form>
+    </div>
+</div>

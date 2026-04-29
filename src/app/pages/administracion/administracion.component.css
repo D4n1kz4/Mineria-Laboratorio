@@ -1,0 +1,25 @@
+.table-custom {
+    font-size: 0.8em; /* Tamaño de fuente más pequeño */
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  /* Encabezado de la Tabla */
+  .table-custom thead th {
+    background-color:  rgb(6,81,163); /* Color de fondo del encabezado */
+    font-weight: 500; /* Letra delgada */
+    color: white; /* Color del texto del encabezado */
+    border: 1px solid #ddd; /* Borde de las celdas del encabezado */
+  }
+  
+  /* Cuerpo de la Tabla */
+  .table-custom tbody td {
+    border: 1px solid #ddd;
+  }
+
+  .custom-icon-size{
+    font-size: 19px;
+  }
+
+
+  

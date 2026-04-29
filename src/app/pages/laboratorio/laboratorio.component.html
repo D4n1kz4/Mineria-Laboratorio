@@ -1,0 +1,1078 @@
+<app-header></app-header>
+<div class="contenedor">
+    <div class="row">
+        <div class="col" style="margin-top: 5px;">
+            <h2 style="color:rgb(106,115,123);">{{cargo}}: {{nombreUsuario}} {{apellido}}</h2>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="d-flex mb-8" style="gap: 10px; margin-bottom: 10px;">
+            <button type="button" class="btn btn-secondary" style="font-weight: 400;"
+                (click)="setActiveButton('registro de muestra', 'registro')"
+                [class.active]="isButtonActive('registro de muestra', 'registro')">REGISTRO DE MUESTRA</button>
+            <button type="button" class="btn btn-secondary" style="font-weight: 400;"
+                (click)="setActiveButton('determinación de humedad', 'humedad')"
+                [class.active]="isButtonActive('determinación de humedad', 'humedad')">DETERMINACIÓN DE HUMEDAD</button>
+            <button type="button" class="btn btn-secondary" style="font-weight: 400;"
+                (click)="setActiveButton('determinacion fmp TML', 'fmptml')"
+                [class.active]="isButtonActive('Ver Indicadores', 'indicadores')">DETERMINACIÓN DE FMP/TML</button>          
+        </div>        
+    </div>
+
+    <div class="row" *ngIf="activeDiv === 'registro'">
+        <div class="col-4">           
+            <label for="exampleDataList" class="form-label" style="color:rgb(106,115,123);">Selecciona N° Nominación</label>
+            <div class="input-group custom-input">
+                <select class="form-select" aria-label="Default select example" [(ngModel)]="nominacionLAB" (change)="onInput()">
+                    <option *ngFor="let nominacion of nominacionesLAB" [value]="nominacion.numeroNominacion">{{nominacion.numeroNominacion}}</option>
+                </select>
+                <button type="button" class="btn btn-secondary" (click)="cleanRegistro()">Limpiar</button>
+            </div>
+            <div style="margin-top: 20px; max-height: 350px; overflow-y: auto;" *ngIf="lotesREG && lotesREG.length > 0">
+                <table datatable style="font-size: 0.8em;" [dtOptions]="dtOptionsLoteslotesREG" class="table table-striped table-bordered row-border hover table-custom">
+                    <thead class="sticky-header">
+                        <tr>
+                            <th>LOTE</th>
+                            <th>PRODUCTOS</th>
+                            <th>MUESTRA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let l of lotesREG; let i = index">
+                            <td>{{l.orden}}</td>
+                            <td>{{l.producto}}</td>
+                            <td>
+                                <button type="button" class="btn btn-secondary btn-sm" (click)="openAddRegistro(l.idLote, l.orden)">Registrar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>            
+        </div>
+        <div class="col-4" *ngIf="registrar">           
+            <form (ngSubmit)="saveRegistro()" [formGroup]="formRegistroLab">
+                <div class="mb-2" style="color:black; margin-top: 20px;">
+                    <div class="form-floating">
+                        <input type="date" class="form-control custom-input1" formControlName="fechaRecepcion" id="floatingInput1">
+                        <label for="floatingInput1">Fecha Recepción: </label>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="form-floating">
+                        <input type="text" class="form-control custom-input1" formControlName="orden" id="floatingInput2" readonly>
+                        <label for="floatingInput2">Lote: </label>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="form-floating">
+                        <input type="number" class="form-control custom-input1" formControlName="pesoMuestra" id="floatingInput3">
+                        <label for="floatingInput3">Peso de la muestra: </label>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="form-floating">
+                        <input type="number" class="form-control custom-input1" formControlName="numSello" id="floatingInput4">
+                        <label for="floatingInput4">Nro. Sello: </label>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="form-floating">
+                        <input type="text" class="form-control custom-input1" formControlName="inspector" id="floatingInput5">
+                        <label for="floatingInput5">Ingresado por: </label> 
+                    </div>
+                </div>
+                <div *ngIf="!registroExiste">
+                    <button type="submit" class="btn btn-secondary btn-sm" style="margin-top: 10px;"[disabled]="formRegistroLab.invalid">Ingresar Registro</button>
+                </div >
+                <div *ngIf="registroExiste">
+                    <button type="button" class="btn btn-secondary ms-2 btn-sm" style="margin-top: 10px;"[disabled]="formRegistroLab.pristine || formRegistroLab.invalid" (click)="editarRegistro()">Editar</button>
+                </div>           
+            </form>
+        </div>
+        <div class="col-4">
+        </div>
+    </div>
+
+
+
+    <div class="row" *ngIf="activeDiv === 'humedad'">
+        <div class="col-3">           
+            <label for="exampleDataList" class="form-label" style="color:rgb(106,115,123);">Selecciona N° Nominación</label>
+            <div class="input-group">
+                <select class="form-select" aria-label="Default select example" [(ngModel)]="nominacionHumedad" (change)="onInputH()">
+                    <option *ngFor="let nominacion of nominacionesHumedad" [value]="nominacion.numeroNominacion">{{nominacion.numeroNominacion}}</option>
+                </select>
+                <button type="button" class="btn btn-secondary" (click)="cleanHumedad()">Limpiar</button>
+            </div>
+            <div style="margin-top: 20px; " *ngIf="lotesHumedad && lotesHumedad.length > 0">
+                <table datatable style="font-size: 0.8em; max-height: 350px; overflow-y: auto;" [dtOptions]="dtOptionsLoteslotesHumedad" class="table table-striped table-bordered row-border hover table-custom">
+                    <thead class="sticky-header">
+                        <tr>
+                            <th style="width: 30%;">LOTE</th>
+                            <th style="width: 30%;">PRODUCTO</th>
+                            <th style="width: 40%;">DETERMINAR HUMEDAD</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let l of lotesHumedad;">
+                            <td>{{l.orden}}</td>
+                            <td>{{l.producto}}</td>
+                            <td>
+                                <div style="margin-bottom: 10px;">
+                                    <button type="button" class="btn btn-secondary btn-extra-sm" (click)="determinacionSimple(l.idLote, l.orden)">HUMEDAD SIMPLE</button>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-secondary btn-extra-sm" (click)="determinacionIncremento(l.idLote, l.orden)">22 INCREMENTOS</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>            
+        </div>
+        <div class="col-9">
+          <button *ngIf="this.detalleHumedad && this.detalleHumedad.length > 0;" type="button" class="btn btn-secondary mb-2" style="background-color:#AB7CC8; margin-top: 30px;" (click)="openDetalleHumedad(modalDetalleHumedad, this.idLote)">
+            Ver detalle de ingreso
+          </button>
+          <div style="margin-top: 10px; max-height: 400px; overflow-y: auto;" *ngIf="this.detSiempleSelecionada || this.detIncrementoSelecionada">
+              <label *ngIf="this.detSiempleSelecionada" for="exampleDataList" class="form-label" style="color:black;">Determinar humedad para el lote: {{this.orden}}</label>
+              <label *ngIf="this.detIncrementoSelecionada" for="exampleDataList" class="form-label" style="color:black;">Determinar humedad por incremento para el lote: {{this.orden}}</label>
+              <table datatable style="font-size: 0.7em;" [dtOptions]="dtOptionsDeterminacionHumedad" class="table table-striped table-bordered row-border hover table-custom">
+                  <thead class="sticky-header">
+                      <tr>
+                          <th style="width: 2%"></th>
+                          <th style="width: 10%">N° DE CHAROLA</th>
+                          <th style="width: 10%">PESO TARA</th>
+                          <th style="width: 10%">PESO HUMEDO</th>
+                          <th style="width: 7%">PESO BRUTO</th>
+                          <th style="width: 13%">PESO SECO 1</th>
+                          <th style="width: 13%">PESO SECO 2</th>
+                          <th style="width: 13%">PESO SECO 3</th>
+                          <th style="width: 6%">CONDICIÓN</th>
+                          <th style="width: 6%">% HUMEDAD</th>
+                          <th style="width: 6%">PROMEDIO HUMEDAD</th>
+                          <th style="width: 4%">ESTADO / ACCIÓN</th>
+                      </tr>
+                  </thead>
+                  <tbody *ngIf="this.detSiempleSelecionada">
+                      <tr *ngFor="let fila of filas; let i = index">
+                          <td style="text-align: center;">{{fila.numero}}</td>
+                          <td>
+                              <div style="display: flex; align-items: center;">
+                                  <span style="margin-right: 5px;">{{ fila.numeroCharola }}</span>
+                                  <input [disabled]="procesoS1[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" type="text" class="form-control" style="width: 10px; flex-grow: 1; font-size: 1em;"  (change)="verificarEstadoBotonGuardar(i, 'filas')"  [(ngModel)]="fila.numeroCharolaUsuario" (input)="convertirAMayusculas($event)">
+                              </div>
+                          </td>
+                          <td><input [disabled]="procesoS1[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" type="number" style="font-size: 1em;" class="form-control" [(ngModel)]="fila.pesoTara" (change)="calcularPesoBruto(i , 'filas')"></td>
+                          <td><input [disabled]="procesoS1[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" type="number" class="form-control" style="font-size: 1em;" [(ngModel)]="fila.pesoHumedo" (change)="calcularPesoBruto(i, 'filas')"></td>
+                          <td style="text-align: center;">{{ fila.pesoBruto }}</td>
+                          <td><input [disabled]="procesoS2[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" *ngIf="this.procesoS1[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" type="number" class="form-control" style="font-size: 0.95em;" [(ngModel)]="fila.pesoSeco1" (change)="actualizarHabilitacionBoton(fila, 'filas', fila.numero)"></td>
+                          <td><input [disabled]="procesoS3[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" *ngIf="this.procesoS2[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" type="number" class="form-control" style="font-size: 0.95em;" [(ngModel)]="fila.pesoSeco2" (change)="determinarEstadoCondicion(fila, 'filas', fila.numero)"></td>
+                          <td><input [disabled]="procesoS4[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" *ngIf="this.procesoS3[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" type="number" class="form-control" style="font-size: 0.95em;" [(ngModel)]="fila.pesoSeco3" (change)="determinarEstadoCondicion3(fila, 'filas', fila.numero)" (ngModelChange)="actualizarPesoSeco3(fila, i, 'filas')"></td>
+                          <ng-container *ngIf="this.procesoS2[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]; else emptyCellCondicion">
+                              <td [ngClass]="{'estado-ok': fila.condicion === 'OK', 'estado-no': fila.condicion === 'NO'}" style="text-align: center;">{{ fila.condicion }}</td>
+                          </ng-container>
+                          <ng-template #emptyCellCondicion><td></td></ng-template>
+                          <ng-container *ngIf="this.procesoS3[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]; else emptyCellHumedad">
+                              <td style="text-align: center; font-size: 0.95em;">{{ calcularPorcentajeHumedad(fila) || 0 }}</td>
+                          </ng-container>
+                          <ng-template #emptyCellHumedad><td></td></ng-template>
+                          <td style="text-align: center; font-size: 0.95em;" *ngIf="i % 2 == 1">{{ fila.promedioHumedad | number:'1.2-2' || 0}}</td>
+                          <td style="text-align: center; font-size: 0.95em;" *ngIf="i % 2 == 0"></td>
+                          <td style="text-align: center; font-size: 0.95em;" *ngIf="i % 2 == 0">
+                              {{fila.estado}}
+                          </td>
+                          <ng-container *ngIf="i % 2 == 1">
+                              <td style="text-align: center; font-size: 0.95em;">
+                                  <button type="button" class="btn btn-secondary btn-extra-sm" style="font-size: 1.2em;" [disabled]="!paresListosParaGuardarFilas.includes(fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote)" (change)="verificarEstadoBotonGuardar(i, 'filas')" (click)="guardarResultIncremento(modalresultaRechazado, fila.numero, 'filas', fila.estado, fila.idInicioResultHumedad)">GUARDAR</button>
+                              </td>
+                          </ng-container>
+                      </tr>
+                  </tbody>
+                  <br>
+                  <!-- FILAS SIMPLE REPETICIÓN -->
+                  <tbody *ngIf="this.detSiempleSelecionada && filasR && filasR.length > 0">
+                      <tr *ngFor="let fila of filasR; let i = index" class="repetido">
+                          <td style="text-align: center;">{{fila.numero}}</td>
+                          <td>
+                              <div style="display: flex; align-items: center;">
+                                  <span style="margin-right: 5px;">{{ fila.numeroCharola }}</span>
+                                  <input [disabled]="procesoS1R[fila.numero + '_' + this.idLote]" type="text" class="form-control" style="width: 10px; flex-grow: 1; font-size: 1em;"  (change)="verificarEstadoBotonGuardar(i, 'filasR')"  [(ngModel)]="fila.numeroCharolaUsuario" (input)="convertirAMayusculas($event)">
+                              </div>
+                          </td>
+                          <td><input [disabled]="procesoS1R[fila.numero + '_' + this.idLote]" type="number" style="font-size: 1em;" class="form-control" [(ngModel)]="fila.pesoTara" (change)="calcularPesoBruto(i , 'filasR')"></td>
+                          <td><input [disabled]="procesoS1R[fila.numero + '_' + this.idLote]" type="number" class="form-control" style="font-size: 1em;" [(ngModel)]="fila.pesoHumedo" (change)="calcularPesoBruto(i, 'filasR')"></td>
+                          <td style="text-align: center;">{{ fila.pesoBruto }}</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td ></td>
+                          <td ></td>
+                          <td style="text-align: center; font-size: 0.95em;" *ngIf="i % 2 == 0">
+                              {{fila.estado}}
+                          </td>
+                          <ng-container *ngIf="i % 2 == 1">
+                              <td style="text-align: center; font-size: 0.95em;">
+                                  <button type="button" class="btn btn-secondary btn-extra-sm" style="font-size: 1.2em;" [disabled]="!paresListosParaGuardarFilasR.includes(fila.numero + '_' + this.idLote)" (change)="verificarEstadoBotonGuardar(i, 'filasR')" (click)="guardarResultIncrementoR(fila.numero, 'filasR', fila.estado)">GUARDAR</button>
+                              </td>
+                          </ng-container>
+                      </tr>
+                  </tbody>
+                  <tbody *ngIf="this.detIncrementoSelecionada">
+                      <tr *ngFor="let fila of filas22; let i = index">
+                          <td style="text-align: center;">{{fila.numero}}</td>
+                          <td>
+                              <div style="display: flex; align-items: center;">
+                                  <span style="margin-right: 5px;">{{ fila.numeroCharola }}</span>
+                                  <input [disabled]="procesoI1[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" type="text" class="form-control" style="width: 10px; flex-grow: 1; font-size: 1em;" (change)="verificarEstadoBotonGuardar(i, 'filas22')"   [(ngModel)]="fila.numeroCharolaUsuario" (input)="convertirAMayusculas($event)">
+                              </div>
+                          </td>
+                          <td><input [disabled]="procesoI1[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" type="number" style="font-size: 1em;" class="form-control" [(ngModel)]="fila.pesoTara" (change)="calcularPesoBruto(i, 'filas22')"></td>
+                          <td><input [disabled]="procesoI1[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" type="number" class="form-control" style="font-size: 1em;" [(ngModel)]="fila.pesoHumedo" (change)="calcularPesoBruto(i, 'filas22')"></td>
+                          <td style="text-align: center;">{{ fila.pesoBruto }}</td>
+                          <td><input [disabled]="procesoI2[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" *ngIf="this.procesoI1[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" type="number" class="form-control" style="font-size: 0.95em;" [(ngModel)]="fila.pesoSeco1" (change)="actualizarHabilitacionBoton(fila, 'filas22', fila.numero)"></td>
+                          <td><input [disabled]="procesoI3[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" *ngIf="this.procesoI2[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" type="number" class="form-control" style="font-size: 0.95em;" [(ngModel)]="fila.pesoSeco2" (change)="determinarEstadoCondicion(fila, 'filas22', fila.numero)"></td>
+                          <td><input [disabled]="procesoI4[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" *ngIf="this.procesoI3[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]" type="number" class="form-control" style="font-size: 0.95em;" [(ngModel)]="fila.pesoSeco3" (change)="determinarEstadoCondicion3(fila, 'filas22', fila.numero)" (ngModelChange)="actualizarPesoSeco3(fila, i, 'filas22')"></td>
+                          <ng-container *ngIf="this.procesoI2[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]; else emptyCellCondicion">
+                              <td [ngClass]="{'estado-ok': fila.condicion === 'OK', 'estado-no': fila.condicion === 'NO'}" style="text-align: center;">{{ fila.condicion }}</td>
+                          </ng-container>
+                          <ng-template #emptyCellCondicion><td></td></ng-template>
+                          <ng-container *ngIf="this.procesoI3[fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote]; else emptyCellHumedad">
+                              <td style="text-align: center; font-size: 0.95em;">{{ calcularPorcentajeHumedad(fila) || 0 }}</td>
+                          </ng-container>
+                          <ng-template #emptyCellHumedad><td></td></ng-template>
+                          <td style="text-align: center; font-size: 0.95em;" *ngIf="i % 2 == 1">{{ fila.promedioHumedad | number:'1.2-2' }}</td>
+                          <td style="text-align: center; font-size: 0.95em;" *ngIf="i % 2 == 0"></td>
+
+                          <td style="text-align: center; font-size: 0.95em;" *ngIf="i % 2 == 0"> {{fila.estado}}</td>
+                          <ng-container *ngIf="i % 2 == 1">
+                              <td style="text-align: center; font-size: 0.95em;">
+                                  <button type="button" class="btn btn-secondary btn-extra-sm" style="font-size: 1.2em;" [disabled]="!paresListosParaGuardarFilas22.includes(fila.idInicioResultHumedad + '_' + fila.numero + '_' + this.idLote)" (change)="verificarEstadoBotonGuardar(i, 'filas22')" (click)="guardarResultIncremento(modalresultaRechazado, fila.numero, 'filas22', fila.estado, fila.idInicioResultHumedad)">GUARDAR</button>
+                              </td>
+                          </ng-container>
+                      </tr>
+                  </tbody>   
+                  <br>
+                  <!-- FILAS INCREMENTO REPETICION -->
+                  <tbody *ngIf="this.detIncrementoSelecionada && filas22R && filas22R.length > 0">
+                      <tr *ngFor="let fila of filas22R; let i = index" class="repetido">
+                          <td style="text-align: center;">{{fila.numero}}</td>
+                          <td>
+                              <div style="display: flex; align-items: center;">
+                                  <span style="margin-right: 5px;">{{ fila.numeroCharola }}</span>
+                                  <input [disabled]="procesoI1R[fila.numero + '_' + this.idLote]" type="text" class="form-control" style="width: 10px; flex-grow: 1; font-size: 1em;" [(ngModel)]="fila.numeroCharolaUsuario" (input)="convertirAMayusculas($event)">
+                              </div>
+                          </td>
+                          <td><input [disabled]="procesoI1R[fila.numero + '_' + this.idLote]" type="number" style="font-size: 1em;" class="form-control" [(ngModel)]="fila.pesoTara" (change)="calcularPesoBruto(i, 'filas22R')"></td>
+                          <td><input [disabled]="procesoI1R[fila.numero + '_' + this.idLote]" type="number" class="form-control" style="font-size: 1em;" [(ngModel)]="fila.pesoHumedo" (change)="calcularPesoBruto(i, 'filas22R')"></td>
+                          <td style="text-align: center;">{{ fila.pesoBruto }}</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td ></td>
+                          <td ></td>
+                          <td style="text-align: center; font-size: 0.95em;" *ngIf="i % 2 == 0"> {{fila.estado}}</td>
+                          <ng-container *ngIf="i % 2 == 1">
+                              <td style="text-align: center; font-size: 0.95em;">
+                                  <button type="button" class="btn btn-secondary btn-extra-sm" style="font-size: 1.2em;" [disabled]="!paresListosParaGuardarFilas22R.includes(fila.numero + '_' + this.idLote)" (change)="verificarEstadoBotonGuardar(i, 'filas22R')" (click)="guardarResultIncrementoR(fila.numero, 'filas22R', fila.estado)">GUARDAR</button>
+                              </td>
+                          </ng-container>
+                      </tr>
+                  </tbody>                              
+              </table>
+          </div>            
+        </div>
+    </div>
+    <div class="row" *ngIf="activeDiv === 'fmptml'">
+        <div class="col-3">           
+            <label for="exampleDataList" class="form-label" style="color:rgb(106,115,123);">Selecciona N° Nominación</label>
+            <div class="input-group custom-inputIMO">
+                <select class="form-select" aria-label="Default select example" [(ngModel)]="nominacionIMO" (change)="onInputIMO()">
+                    <option *ngFor="let nominacion of nominacionesIMO" [value]="nominacion.numeroNominacion">{{nominacion.numeroNominacion}}</option>
+                </select>
+                <button type="button" class="btn btn-secondary" (click)="cleanIMO()">Limpiar</button>
+            </div>
+            <div style="margin-top: 20px; max-height: 350px; overflow-y: auto;" *ngIf="lotesIMO && lotesIMO.length > 0">
+                <table datatable style="font-size: 0.8em;" [dtOptions]="dtOptionsLoteslotesREG" class="table table-striped table-bordered row-border hover table-custom">
+                    <thead class="sticky-header">
+                        <tr>
+                            <th>LOTE</th>
+                            <th>PRODUCTOS</th>
+                            <th>MUESTRA IMO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let l of lotesIMO; let i = index">
+                            <td>{{l.orden}}</td>
+                            <td>{{l.producto}}</td>
+                            <td>
+                                <button type="button" class="btn btn-secondary btn-sm" (click)="openIMO(l.idLote, l.orden)">REALIZAR</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>            
+        </div>
+
+        <div *ngIf="inicioresultimoSuccess" class="col-3">
+          <button type="button" class="btn btn-secondary mb-2" style="background-color:#AB7CC8; margin-left: 30px; margin-top: 30px;" (click)="toggleDetails()">
+            Ver detalle de ingreso
+          </button>
+          <div *ngIf="showDetails">
+            <table *ngIf="inicioresultimoSuccess" style="font-size: 0.8em; margin-top: 15px;" class="table table-striped table-bordered row-border hover table-custom">
+              <thead>
+                <tr>
+                  <th>Prueba</th>
+                  <th>Fecha de ingreso</th>
+                  <th>Usuario</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="inicioresultimoSuccess">
+                    <td>Muestra</td>
+                    <td>{{ fechaMuestra }}</td>
+                    <td>{{ nombreMuestra }}</td>
+                </tr>
+                <tr *ngIf="anaturalSuccess">
+                    <td>A Natural</td>
+                    <td>{{ fechaAnatural }}</td>
+                    <td>{{ nombreaAnatural }}</td>
+                </tr>
+                <tr *ngIf="preliminarSuccess">
+                  <td>B Preliminar</td>
+                  <td>{{ fechaPreliminar }}</td>
+                  <td>{{ nombrePreliminar }}</td>
+              </tr>
+                <tr *ngIf="cjustbeforeunoSuccess">
+                    <td>C Just Before Uno</td>
+                    <td>{{ fechaCJustbeforeuno }}</td>
+                    <td>{{ nombreCJustbeforeuno }}</td>
+                </tr>
+                <tr *ngIf="cjustbeforedosSuccess">
+                    <td>C Just Before Dos</td>
+                    <td>{{ fechaCJustbeforedos }}</td>
+                    <td>{{ nombreCJustbeforedos }}</td>
+                </tr>
+                <tr *ngIf="djustaboveunoSuccess">
+                    <td>D Just Above Uno</td>
+                    <td>{{ fechaDJustaboveuno }}</td>
+                    <td>{{ nombreDJustaboveuno }}</td>
+                </tr>
+                <tr *ngIf="djustabovedosSuccess">
+                    <td>D Just Above Dos</td>
+                    <td>{{ fechaDJustabovedos }}</td>
+                    <td>{{ nombreDJustabovedos }}</td>
+                </tr>
+                <tr *ngIf="djustabovedosSuccess">
+                  <td>FPM</td>
+                  <td>{{ fechaDJustabovedos }}</td>
+                  <td>{{ nombreDJustabovedos }}</td>
+              </tr>
+              <tr *ngIf="djustabovedosSuccess">
+                <td>TML</td>
+                <td>{{ fechaDJustabovedos }}</td>
+                <td>{{ nombreDJustabovedos }}</td>
+            </tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+        
+        
+        <div class="col-6">  
+          <form *ngIf="registrarResultIMO" (ngSubmit)="saveInicioResultIMO()" [formGroup]="formInicioResultIMO">
+            <label style="color:rgb(106,115,123); margin-top: 25px;">Prueba IMO lote: {{this.orden}}</label>
+            <table style="margin-top: 5px;">
+                <thead>
+                    <tr>
+                        <th style="font-size: 0.85em; font-weight: bold;" >CALIDAD: </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input  class = "input-insert-calidad" type="text" formControlName="calidad"/></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table style="margin-top: 25px;">
+                <thead>
+                    <tr>
+                    <th class = "input-insert-body">MUESTRA</th>
+                    <th class = "input-insert-body">TARA</th>
+                    <th class = "input-insert-body">BRUTO</th>
+                    <th class = "input-insert-body">NETO</th>
+                    <th class = "input-insert-body">DENSIDAD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                      <td class = "input-insert-body">MUESTRA 1</td>
+                      <td><input class = "input-insert" type="number" formControlName="muestraUnoTara" (change)="calcularPesoNeto()"/></td>
+                      <td><input class = "input-insert" type="number" formControlName="muestraUnoBruto"(change)="calcularPesoNeto()"/></td>
+                      <td><input class = "input-insert" type="number" formControlName="muestraUnoNeto"/></td>
+                      <td><input class = "input-insert" type="number" formControlName="muestraUnoDensidad"/></td>
+                    </tr>
+                    <tr>
+                      <td class = "input-insert-body">MUESTRA 2</td>
+                      <td><input class = "input-insert" type="number" formControlName="muestraDosTara" (change)="calcularPesoNeto()"/></td>
+                      <td><input class = "input-insert" type="number" formControlName="muestraDosBruto"(change)="calcularPesoNeto()"/></td>
+                      <td><input class = "input-insert" type="number" formControlName="muestraDosNeto"/></td>
+                      <td><input class = "input-insert" type="number" formControlName="muestraDosDensidad"/></td>
+                    </tr>
+                    <tr>
+                    <td class = "input-insert-body">MUESTRA 3</td>
+                      <td><input class = "input-insert" type="number" formControlName="muestraTresTara"(change)="calcularPesoNeto()"/></td>
+                      <td><input class = "input-insert" type="number" formControlName="muestraTresBruto"(change)="calcularPesoNeto()"/></td>
+                      <td><input class = "input-insert" type="number" formControlName="muestraTresNeto"/></td>
+                      <td><input class = "input-insert" type="number" formControlName="muestraTresDensidad"/></td>
+                    </tr>
+                </tbody>
+                <table style="margin-top: 15px;">
+                  <thead>
+                    <tr>
+                      <th class = "input-insert-body"(change)="calcularPSI()">PROMEDIO</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><input type="number" formControlName="promedio" class = "input-insert"  readonly/></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table style="margin-top: 15px;">
+                  <thead>
+                    <tr>
+                      <th class = "input-insert-body">PSI</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><input type="number" formControlName="psi" class = "input-insert"  readonly/></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div *ngIf="!resultInicioIMO" style="margin-top: 15px;">
+                    <button type="submit" [disabled]="formInicioResultIMO.invalid"  class="btn btn-secondary btn-sm">Guardar</button>
+                </div>
+            </table>
+          </form>
+            <br>
+            <br>
+            <br>
+          <form *ngIf="registrarResultAnatural" (ngSubmit)="saveformAnatural()" [formGroup]="formAnatural">
+            <div> 
+              <label for="exampleDataList" class="form-label" style="color:black; font-weight: bold;">A Natural</label>
+            </div>
+            <div *ngIf="!resultAnatural">
+              <button type="button" class="btn btn-secondary btn-sm" (click)="toggleDesplazamiento()" style="margin-top: 5px; margin-bottom: 15px;">
+                  {{ muestraDesplazamiento ? 'Con Desplazamiento' : 'Sin Desplazamiento' }}
+              </button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th colspan="5" class = "input-insert-body">DESPLAZAMIENTO</th>  
+                </tr>
+                <tr>
+                  <td></td>
+                  <th>A</th>
+                  <th>B</th>
+                  <th>C</th>
+                  <th>D</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class = "input-insert-body">DESPLAZAMIENTO INICIAL</td>
+                  <td><input type="number" class = "input-insert" formControlName="desInicialAAN" (change)="calcularDesplazamiento()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desInicialBAN" (change)="calcularDesplazamiento()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desInicialCAN" (change)="calcularDesplazamiento()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desInicialDAN" (change)="calcularDesplazamiento()"/></td>
+                </tr>
+                <tr *ngIf="muestraDesplazamiento">
+                  <td class = "input-insert-body">DESPLAZAMIENTO FINAL</td>
+                  <td><input type="number" class = "input-insert" formControlName="desFinalAAN" (change)="calcularDesplazamiento()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desFinalBAN" (change)="calcularDesplazamiento()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desFinalCAN" (change)="calcularDesplazamiento()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desFinalDAN" (change)="calcularDesplazamiento()"/></td>
+                </tr>
+                <tr *ngIf="muestraDesplazamiento">
+                  <td class = "input-insert-body">DESPLAZAMIENTO</td>
+                  <td><input type="number" class = "input-insert" formControlName="desplazamientoAAN" readonly/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desplazamientoBAN" readonly/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desplazamientoCAN" readonly/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desplazamientoDAN" readonly/></td>
+                </tr>
+                <tr *ngIf="muestraDesplazamiento">
+                  <td class = "input-insert-body">PROMEDIO</td>
+                  <td></td>
+                  <td><input type="number" class = "input-insert" formControlName="promedioDesplazamientoAN" readonly/></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr *ngIf="muestraDesplazamiento">
+                  <td class = "input-insert-body">CHAROLA</td>
+                  <td class = "input-insert-body">TARA</td>
+                  <td class = "input-insert-body">PESO INICIAL</td>
+                  <td class = "input-insert-body">PESO SECO 1</td>
+                  <td class = "input-insert-body">PESO SECO 2</td>
+                  <td class = "input-insert-body">% HUMEDAD</td>
+                </tr>
+                <tr *ngIf="muestraDesplazamiento">
+                  <td><input type="text" class = "input-insert" formControlName="charolaUnoAN"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaUnoTaraAN" (change)="calcularHumedadCharolaUno()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaUnoPIAN" (change)="calcularHumedadCharolaUno()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaUnoPSUAN" /></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaUnoPSDAN" (change)="calcularHumedadCharolaUno()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaUnoPHumedadAN" readonly/></td>
+                </tr>
+                <tr *ngIf="muestraDesplazamiento">
+                  <td><input type="text" class = "input-insert" formControlName="charolaDosAN"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaDosTaraAN" (change)="calcularHumedadCharolaDos()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaDosPIAN" (change)="calcularHumedadCharolaDos()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaDosPSUAN"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaDosPSDAN" (change)="calcularHumedadCharolaDos()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaDosPHumedadAN" readonly/></td>
+                </tr>
+              </tbody>
+              <div *ngIf="!resultAnatural" style="margin-top: 15px;">
+                  <button type="submit" [disabled]="!esFormularioValido()" class="btn btn-secondary btn-sm">Guardar</button>
+              </div>
+            </table>
+          </form>
+            <br>
+            <br>
+            <br>
+          <form *ngIf="registrarResultBPreliminar" (ngSubmit)="saveformBPreliminar()" [formGroup]="formBPreliminar">
+            <label for="exampleDataList" class="form-label" style="color:black; font-weight: bold;">B Preliminar</label>
+            <table>
+              <thead>
+                <tr>
+                  <th>ml</th>
+                  <th colspan="5" class = "input-insert-body">DESPLAZAMIENTO</th>  
+                </tr>
+                <tr>
+                  <td><input type="number" class = "input-insert" formControlName="mlBP"/></td>
+                  <th>A</th>
+                  <th>B</th>
+                  <th>C</th>
+                  <th>D</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class = "input-insert-body">DESPLAZAMIENTO INICIAL</td>
+                  <td><input type="number" class = "input-insert" formControlName="desInicialABP"(change)="calcularDesplazamientoBP()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desInicialBBP"(change)="calcularDesplazamientoBP()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desInicialCBP"(change)="calcularDesplazamientoBP()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desInicialDBP"(change)="calcularDesplazamientoBP()"/></td>
+                </tr>
+                <tr>
+                  <td class = "input-insert-body">DESPLAZAMIENTO FINAL</td>
+                  <td><input type="number" class = "input-insert" formControlName="desFinalABP" (change)="calcularDesplazamientoBP()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desFinalBBP" (change)="calcularDesplazamientoBP()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desFinalCBP" (change)="calcularDesplazamientoBP()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desFinalDBP" (change)="calcularDesplazamientoBP()"/></td>
+                </tr>
+                <tr>
+                  <td class = "input-insert-body">DESPLAZAMIENTO</td>
+                  <td><input type="number" class = "input-insert" formControlName="desplazamientoABP" readonly/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desplazamientoBBP" readonly/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desplazamientoCBP" readonly/></td>
+                  <td><input type="number" class = "input-insert" formControlName="desplazamientoDBP" readonly/></td>
+                </tr>
+                <tr>
+                  <td class = "input-insert-body">PROMEDIO</td>
+                  <td></td>
+                  <td><input type="number" class = "input-insert" formControlName="promedioDesplazamientoBP" readonly/></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td class = "input-insert-body">CHAROLA</td>
+                  <td class = "input-insert-body">TARA</td>
+                  <td class = "input-insert-body">PESO INICIAL</td>
+                  <td class = "input-insert-body">PESO SECO 1</td>
+                  <td class = "input-insert-body">PESO SECO 2</td>
+                  <td class = "input-insert-body">% HUMEDAD</td>
+                </tr>
+                <tr>
+                  <td><input type="text" class = "input-insert" formControlName="charolaUnoBP"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaUnoTaraBP"(change)="calcularHumedadCharolaUnoBP()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaUnoPIBP"(change)="calcularHumedadCharolaUnoBP()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaUnoPSUBP"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaUnoPSDBP"(change)="calcularHumedadCharolaUnoBP()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaUnoPHumedadBP" readonly/></td>
+                </tr>
+                <tr>
+                  <td><input type="text" class = "input-insert" formControlName="charolaDosBP"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaDosTaraBP" (change)="calcularHumedadCharolaDosBP()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaDosPIBP" (change)="calcularHumedadCharolaDosBP()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaDosPSUBP"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaDosPSDBP" (change)="calcularHumedadCharolaDosBP()"/></td>
+                  <td><input type="number" class = "input-insert" formControlName="charolaDosPHumedadBP" readonly/></td>
+                </tr>
+              </tbody>
+              <div *ngIf="!resultBPreliminar" style="margin-top: 15px;">
+                  <button type="submit" [disabled]="formBPreliminar.invalid" class="btn btn-secondary btn-sm">Guardar</button>
+              </div>
+            </table>
+          </form>
+            <br>
+            <br>
+            <br>
+          <form *ngIf="registrarResultCBeforeUno" (ngSubmit)="saveformCBeforeUno()" [formGroup]="formCBeforeUno"> 
+            <label for="exampleDataList" class="form-label" style="color:black; font-weight: bold;">C Just Before</label>
+            <table>
+                <thead>
+                  <tr>
+                    <th>ml</th>
+                    <th colspan="5" class = "input-insert-body">DESPLAZAMIENTO</th>  
+                  </tr>
+                  <tr>
+                    <td><input type="number" class = "input-insert" formControlName="mlC1"/></td>
+                    <th>A</th>
+                    <th>B</th>
+                    <th>C</th>
+                    <th>D</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class = "input-insert-body">DESPLAZAMIENTO INICIAL</td>
+                    <td><input type="number" class = "input-insert" formControlName="desInicialAC1"(change)="calcularDesplazamientoC1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desInicialBC1"(change)="calcularDesplazamientoC1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desInicialCC1"(change)="calcularDesplazamientoC1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desInicialDC1"(change)="calcularDesplazamientoC1()"/></td>
+                  </tr>
+                  <tr>
+                    <td class = "input-insert-body">DESPLAZAMIENTO FINAL</td>
+                    <td><input type="number" class = "input-insert" formControlName="desFinalAC1" (change)="calcularDesplazamientoC1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desFinalBC1" (change)="calcularDesplazamientoC1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desFinalCC1" (change)="calcularDesplazamientoC1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desFinalDC1" (change)="calcularDesplazamientoC1()"/></td>
+                  </tr>
+                  <tr>
+                    <td class = "input-insert-body">DESPLAZAMIENTO</td>
+                    <td><input type="number" class = "input-insert" formControlName="desplazamientoAC1" readonly/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desplazamientoBC1" readonly/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desplazamientoCC1" readonly/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desplazamientoDC1" readonly/></td>
+                  </tr>
+                  <tr>
+                    <td class = "input-insert-body">PROMEDIO</td>
+                    <td></td>
+                    <td><input type="number" class = "input-insert" formControlName="promedioDesplazamientoC1" readonly/></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td class = "input-insert-body">CHAROLA</td>
+                    <td class = "input-insert-body">TARA</td>
+                    <td class = "input-insert-body">PESO INICIAL</td>
+                    <td class = "input-insert-body">PESO SECO 1</td>
+                    <td class = "input-insert-body">PESO SECO 2</td>
+                    <td class = "input-insert-body">% HUMEDAD</td>
+                  </tr>
+                  <tr>
+                    <td><input type="text" class = "input-insert" formControlName="charolaUnoC1"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoTaraC1"(change)="calcularHumedadCharolaUnoC1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoPIC1"(change)="calcularHumedadCharolaUnoC1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoPSUC1"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoPSDC1"(change)="calcularHumedadCharolaUnoC1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoPHumedadC1" readonly/></td>
+                  </tr>
+                  <tr>
+                    <td><input type="text" class = "input-insert" formControlName="charolaDosC1"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosTaraC1" (change)="calcularHumedadCharolaDosC1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosPIC1" (change)="calcularHumedadCharolaDosC1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosPSUC1"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosPSDC1" (change)="calcularHumedadCharolaDosC1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosPHumedadC1" readonly/></td>
+                  </tr>
+                </tbody>
+                <div *ngIf="!resultCBeforeUno" style="margin-top: 15px;">
+                    <button type="submit" [disabled]="formCBeforeUno.invalid" class="btn btn-secondary btn-sm">Guardar</button>
+                </div>
+            </table>
+          </form>
+            <br>
+            <br>
+            <br>
+          <form *ngIf="registrarResultCBeforeDos" (ngSubmit)="saveformCBeforeDos()" [formGroup]="formCBeforeDos"> 
+            <label for="exampleDataList" class="form-label" style="color:black; font-weight: bold;">C Just Before</label>
+            <table>
+                <thead>
+                  <tr>
+                    <th>ml</th>
+                    <th colspan="5" class = "input-insert-body">DESPLAZAMIENTO</th>  
+                  </tr>
+                  <tr>
+                    <td><input type="number" class = "input-insert" formControlName="mlC2"/></td>
+                    <th>A</th>
+                    <th>B</th>
+                    <th>C</th>
+                    <th>D</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class = "input-insert-body">DESPLAZAMIENTO INICIAL</td>
+                    <td><input type="number" class = "input-insert" formControlName="desInicialAC2"(change)="calcularDesplazamientoC2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desInicialBC2"(change)="calcularDesplazamientoC2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desInicialCC2"(change)="calcularDesplazamientoC2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desInicialDC2"(change)="calcularDesplazamientoC2()"/></td>
+                  </tr>
+                  <tr>
+                    <td class = "input-insert-body">DESPLAZAMIENTO FINAL</td>
+                    <td><input type="number" class = "input-insert" formControlName="desFinalAC2" (change)="calcularDesplazamientoC2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desFinalBC2" (change)="calcularDesplazamientoC2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desFinalCC2" (change)="calcularDesplazamientoC2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desFinalDC2" (change)="calcularDesplazamientoC2()"/></td>
+                  </tr>
+                  <tr>
+                    <td class = "input-insert-body">DESPLAZAMIENTO</td>
+                    <td><input type="number" class = "input-insert" formControlName="desplazamientoAC2" readonly/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desplazamientoBC2" readonly/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desplazamientoCC2" readonly/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desplazamientoDC2" readonly/></td>
+                  </tr>
+                  <tr>
+                    <td class = "input-insert-body">PROMEDIO</td>
+                    <td></td>
+                    <td><input type="number" class = "input-insert" formControlName="promedioDesplazamientoC2" readonly/></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td class = "input-insert-body">CHAROLA</td>
+                    <td class = "input-insert-body">TARA</td>
+                    <td class = "input-insert-body">PESO INICIAL</td>
+                    <td class = "input-insert-body">PESO SECO 1</td>
+                    <td class = "input-insert-body">PESO SECO 2</td>
+                    <td class = "input-insert-body">% HUMEDAD</td>
+                  </tr>
+                  <tr>
+                    <td><input type="text" class = "input-insert" formControlName="charolaUnoC2"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoTaraC2"(change)="calcularHumedadCharolaUnoC2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoPIC2"(change)="calcularHumedadCharolaUnoC2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoPSUC2"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoPSDC2"(change)="calcularHumedadCharolaUnoC2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoPHumedadC2" readonly/></td>
+                  </tr>
+                  <tr>
+                    <td><input type="text" class = "input-insert" formControlName="charolaDosC2"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosTaraC2" (change)="calcularHumedadCharolaDosC2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosPIC2" (change)="calcularHumedadCharolaDosC2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosPSUC2"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosPSDC2" (change)="calcularHumedadCharolaDosC2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosPHumedadC2" readonly/></td>
+                  </tr>
+                </tbody>
+                <div *ngIf="!resultCBeforeDos" style="margin-top: 15px;">
+                    <button type="submit" [disabled]="formCBeforeDos.invalid" class="btn btn-secondary btn-sm">Guardar</button>
+                </div>
+            </table>
+          </form>
+            <br>
+            <br>
+            <br>
+          <form *ngIf="registrarResultDAboveUno" (ngSubmit)="saveformDAboveUno()" [formGroup]="formDAboveUno"> 
+            <label for="exampleDataList" class="form-label" style="color:black; font-weight: bold;">D Just Above</label>
+            <table>
+                <thead>
+                  <tr>
+                    <th>ml</th>
+                    <th colspan="5" class = "input-insert-body">DESPLAZAMIENTO</th>  
+                  </tr>
+                  <tr>
+                    <td><input type="number" class = "input-insert" formControlName="mlD1"/></td>
+                    <th>A</th>
+                    <th>B</th>
+                    <th>C</th>
+                    <th>D</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class = "input-insert-body">DESPLAZAMIENTO INICIAL</td>
+                    <td><input type="number" class = "input-insert" formControlName="desInicialAD1"(change)="calcularDesplazamientoD1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desInicialBD1"(change)="calcularDesplazamientoD1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desInicialCD1"(change)="calcularDesplazamientoD1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desInicialDD1"(change)="calcularDesplazamientoD1()"/></td>
+                  </tr>
+                  <tr>
+                    <td class = "input-insert-body">DESPLAZAMIENTO FINAL</td>
+                    <td><input type="number" class = "input-insert" formControlName="desFinalAD1" (change)="calcularDesplazamientoD1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desFinalBD1" (change)="calcularDesplazamientoD1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desFinalCD1" (change)="calcularDesplazamientoD1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desFinalDD1" (change)="calcularDesplazamientoD1()"/></td>
+                  </tr>
+                  <tr>
+                    <td class = "input-insert-body">DESPLAZAMIENTO</td>
+                    <td><input type="number" class = "input-insert" formControlName="desplazamientoAD1" readonly/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desplazamientoBD1" readonly/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desplazamientoCD1" readonly/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desplazamientoDD1" readonly/></td>
+                  </tr>
+                  <tr>
+                    <td class = "input-insert-body">PROMEDIO</td>
+                    <td></td>
+                    <td><input type="number" class = "input-insert" formControlName="promedioDesplazamientoD1" readonly/></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td class = "input-insert-body">CHAROLA</td>
+                    <td class = "input-insert-body">TARA</td>
+                    <td class = "input-insert-body">PESO INICIAL</td>
+                    <td class = "input-insert-body">PESO SECO 1</td>
+                    <td class = "input-insert-body">PESO SECO 2</td>
+                    <td class = "input-insert-body">% HUMEDAD</td>
+                  </tr>
+                  <tr>
+                    <td><input type="text" class = "input-insert" formControlName="charolaUnoD1"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoTaraD1"(change)="calcularHumedadCharolaUnoD1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoPID1"(change)="calcularHumedadCharolaUnoD1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoPSUD1"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoPSDD1"(change)="calcularHumedadCharolaUnoD1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoPHumedadD1" readonly/></td>
+                  </tr>
+                  <tr>
+                    <td><input type="text" class = "input-insert" formControlName="charolaDosD1"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosTaraD1" (change)="calcularHumedadCharolaDosD1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosPID1" (change)="calcularHumedadCharolaDosD1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosPSUD1"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosPSDD1" (change)="calcularHumedadCharolaDosD1()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosPHumedadD1" readonly/></td>
+                  </tr>
+                </tbody>
+                <div *ngIf="!resultDAboveUno" style="margin-top: 15px;">
+                    <button type="submit" [disabled]="formDAboveUno.invalid" class="btn btn-secondary btn-sm">Guardar</button>
+                </div>
+            </table>
+          </form>
+            <br>
+            <br>
+            <br>
+          <form *ngIf="registrarResultDAboveDos" (ngSubmit)="saveformDAboveDos()" [formGroup]="formDAboveDos"> 
+            <label for="exampleDataList" class="form-label" style="color:black; font-weight: bold;">D Just Above</label>
+            <table>
+                <thead>
+                  <tr>
+                    <th>ml</th>
+                    <th colspan="5" class = "input-insert-body">DESPLAZAMIENTO</th>  
+                  </tr>
+                  <tr>
+                    <td><input type="number" class = "input-insert" formControlName="mlD2"/></td>
+                    <th>A</th>
+                    <th>B</th>
+                    <th>C</th>
+                    <th>D</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class = "input-insert-body">DESPLAZAMIENTO INICIAL</td>
+                    <td><input type="number" class = "input-insert" formControlName="desInicialAD2"(change)="calcularDesplazamientoD2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desInicialBD2"(change)="calcularDesplazamientoD2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desInicialCD2"(change)="calcularDesplazamientoD2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desInicialDD2"(change)="calcularDesplazamientoD2()"/></td>
+                  </tr>
+                  <tr>
+                    <td class = "input-insert-body">DESPLAZAMIENTO FINAL</td>
+                    <td><input type="number" class = "input-insert" formControlName="desFinalAD2" (change)="calcularDesplazamientoD2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desFinalBD2" (change)="calcularDesplazamientoD2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desFinalCD2" (change)="calcularDesplazamientoD2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desFinalDD2" (change)="calcularDesplazamientoD2()"/></td>
+                  </tr>
+                  <tr>
+                    <td class = "input-insert-body">DESPLAZAMIENTO</td>
+                    <td><input type="number" class = "input-insert" formControlName="desplazamientoAD2" readonly/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desplazamientoBD2" readonly/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desplazamientoCD2" readonly/></td>
+                    <td><input type="number" class = "input-insert" formControlName="desplazamientoDD2" readonly/></td>
+                  </tr>
+                  <tr>
+                    <td class = "input-insert-body">PROMEDIO</td>
+                    <td></td>
+                    <td><input type="number" class = "input-insert" formControlName="promedioDesplazamientoD2" readonly/></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td class = "input-insert-body">CHAROLA</td>
+                    <td class = "input-insert-body">TARA</td>
+                    <td class = "input-insert-body">PESO INICIAL</td>
+                    <td class = "input-insert-body">PESO SECO 1</td>
+                    <td class = "input-insert-body">PESO SECO 2</td>
+                    <td class = "input-insert-body">% HUMEDAD</td>
+                  </tr>
+                  <tr>
+                    <td><input type="text" class = "input-insert" formControlName="charolaUnoD2"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoTaraD2"(change)="calcularHumedadCharolaUnoD2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoPID2"(change)="calcularHumedadCharolaUnoD2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoPSUD2"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoPSDD2"(change)="calcularHumedadCharolaUnoD2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaUnoPHumedadD2" readonly/></td>
+                  </tr>
+                  <tr>
+                    <td><input type="text" class = "input-insert" formControlName="charolaDosD2"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosTaraD2" (change)="calcularHumedadCharolaDosD2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosPID2" (change)="calcularHumedadCharolaDosD2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosPSUD2"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosPSDD2" (change)="calcularHumedadCharolaDosD2()"/></td>
+                    <td><input type="number" class = "input-insert" formControlName="charolaDosPHumedadD2" readonly/></td>
+                  </tr>
+                </tbody>
+                <div *ngIf="!resulDAboveDos" style="margin-top: 15px;">
+                    <button type="submit" [disabled]="formDAboveDos.invalid" class="btn btn-secondary btn-sm">Guardar</button>
+                </div>
+            </table>
+          </form>
+            <br>
+            <br>
+            <br>
+            <div *ngIf="resultadosFMPTML?.success">
+              <table style="width: 50%; margin-left: 0px; margin-bottom: 30px;" datatable [dtOptions]="dtOptionsFPMTML" class="table table-striped table-bordered row-border hover table-custom">
+                  <thead class="sticky-header">
+                      <tr>
+                          <th>Category</th>
+                          <th>Moisture</th>
+                          <th>Average</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <td class="input-insert-body">C1</td>
+                          <td><input type="number" class="input-insert" [(ngModel)]="resultadosFMPTML.promCUno" [ngModelOptions]="{standalone: true}"></td>
+                          <td></td>
+                      </tr>
+                      <tr>
+                          <td class="input-insert-body">C2</td>
+                          <td><input type="number" class="input-insert" [(ngModel)]="resultadosFMPTML.promCDos" [ngModelOptions]="{standalone: true}"></td>
+                          <td><input type="number" class="input-insert" [(ngModel)]="resultadosFMPTML.promedioC" [ngModelOptions]="{standalone: true}"></td>
+                      </tr>
+                      <tr>
+                          <td class="input-insert-body">D1</td>
+                          <td><input type="number" class="input-insert" [(ngModel)]="resultadosFMPTML.promDUno" [ngModelOptions]="{standalone: true}"></td>
+                          <td></td>
+                      </tr>
+                      <tr>
+                          <td class="input-insert-body">D2</td>
+                          <td><input type="number" class="input-insert" [(ngModel)]="resultadosFMPTML.promDDos" [ngModelOptions]="{standalone: true}"></td>
+                          <td><input type="number" class="input-insert" [(ngModel)]="resultadosFMPTML.promedioD" [ngModelOptions]="{standalone: true}"></td>
+                      </tr>
+                      <tr>
+                          <td class="input-insert-body">FMP</td>
+                          <td></td>
+                          <td><input type="number" class="input-insert" [(ngModel)]="resultadosFMPTML.fpm" [ngModelOptions]="{standalone: true}"></td>
+                      </tr>
+                      <tr>
+                          <td class="input-insert-body">TML</td>
+                          <td></td>
+                          <td><input type="number" class="input-insert" [(ngModel)]="resultadosFMPTML.tml" [ngModelOptions]="{standalone: true}"></td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+      </div>
+   </div>
+
+    
+<ng-template #modalIncremento let-modal>
+    <div class="modal-header">
+        <div><label for="exampleDataList" class="form-label" style="color: white; font-size: 0.74rem;">INGRESA LA CANTIDAD DE INCREMENTOS </label></div>
+        <div class="center-container">
+            <mat-icon style="color: white; background-color: gray; border-radius: 50%;" (click)="closeModalIncremento()">close</mat-icon>
+        </div>
+    </div> 
+    <div class="modal-body">
+        <div style="display: flex; justify-content: center;">
+            <div class="form-floating">
+                <input type="number" class="form-control" [(ngModel)]="valorIncremento" id="floatingInput6">
+                <label for="floatingInput3">Incrementos: </label>
+                <span style="color: red; font-size: 0.65rem; margin-top: 5px;" *ngIf="valorIncremento != null && (valorIncremento < 2 || valorIncremento > 22)">El rango del incremento es del 2 al 22</span>
+            </div>
+            
+        </div>
+    </div>
+    <div class="modal-footer mx-auto">
+        <button type="button" class="btn btn-success" 
+                [disabled]="!valorIncremento || valorIncremento <= 1 || valorIncremento >= 23" 
+                (click)="agregarIncremento()">Agregar</button>
+    </div>
+</ng-template>
+
+
+<ng-template #modalresultaRechazado let-modal>
+    <div class="modal-header">
+        <div><label for="exampleDataList" class="form-label" style="color: white; font-size: 0.8rem;">¡UNA VEZ GUARDADO EL RESULTADO RECHAZADO NO SE PODRA EDITAR!</label></div>
+        <div class="center-container">
+            <mat-icon style="color: white; background-color: gray; border-radius: 50%;" (click)="modal.dismiss()">close</mat-icon>
+        </div>
+    </div> 
+    <div class="modal-body">
+        <p></p>
+        <p>¿Guardar resultado rechazado?</p>
+    </div>
+    <div class="modal-footer mx-auto">
+        <button type="button" class="btn btn-success" (click)="modal.close('Cancelar')">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="modal.close('Guardar')">Guardar</button>
+    </div>
+</ng-template>
+
+
+
+<ng-template #modalDetalleHumedad let-modal>
+  <div class="modal-header">
+      <div class="modal-title">DETALLE DETERMINACIÓN DE HUMEDAD</div>
+      <mat-icon style="color: white; background-color: gray; border-radius: 50%;" (click)="modal.close()">close</mat-icon>
+  </div>
+  <div class="modal-body adjuntos-body">
+    <button *ngIf="getIdCargo() === this.cargo && this.resultadoComparacion && !this.autorizado" type="button" class="btn btn-secondary btn-sm" style="background-color:#AB7CC8; margin-top: 5px;" (click)="autorizar()">
+      Autorizar Prueba
+    </button>
+    <div *ngIf="this.autorizado" style="margin-top: 5px; font-size: 18px; font-weight: bold;">
+      Revisado por: {{ this.nombreAutorizador }}
+    </div>
+    <table style=" margin-top: 10px;" class="table table-striped table-bordered row-border hover table-custom">
+        <thead class="sticky-header">
+            <tr>
+                <th>NUMERO</th>
+                <th>CHAROLA</th>
+                <th>FECHA DE INICIO</th>
+                <th>USUARIO</th>
+                <th>FECHA SECADO 1</th>
+                <th>USUARIO</th>
+                <th>FECHA SECADO 2</th>
+                <th>USUARIO</th>
+                <th>FECHA SECADO 3</th>
+                <th>USUARIO</th>
+                <th>FECHA PROMEDIO Y TERMINO DEL PROCESO</th>
+                <th>USUARIO</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let l of detalleHumedad">
+                <td>{{l.Numero}}</td>
+                <td>{{l.Charola}}</td>
+                <td>{{l.FechaInicio}}</td>
+                <td>{{l.NombreUsuarioInicio}}</td>
+                <td>{{l.FechaSecadoUno}}</td>
+                <td>{{l.NombreUsuarioSecadoUno}}</td>
+                <td>{{l.FechaSecadoDos}}</td>
+                <td>{{l.NombreUsuarioSecadoDos}}</td>      
+                <td>{{l.FechaSecadoTres}}</td>
+                <td>{{l.NombreUsuarioSecadoTres}}</td>
+                <td>{{l.FechaPromedioHumedad}}</td>
+                <td>{{l.NombreUsuarioPromedioHumedad}}</td>   
+            </tr>
+        </tbody>
+    </table>
+  </div>
+</ng-template>

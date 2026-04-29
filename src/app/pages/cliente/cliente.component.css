@@ -1,0 +1,348 @@
+
+
+.cliente-header {
+    margin-top: 0;
+    margin-bottom: 0;
+    background-color:rgb(0,76,171);
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.cliente-header .row {
+    align-items: center;
+}
+
+.cliente-header .col-1 {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom:3px;
+}
+
+
+.cliente-header .col-10 {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.cliente-header .col-2.logo-gm img {
+    max-width: 135px;
+    height: auto;
+}
+
+
+.bnCliente {
+    margin-top: 20px;
+    margin-right: 30px;
+    margin-bottom: 0;
+}
+
+.custom-input{
+    width: 80%;
+}
+
+.input-fecha{
+    width: 100%;
+}
+
+.btn-margin-right {
+    margin-right: 10px;
+}
+
+
+.container {
+    display: flex;
+    gap: 20px;
+}
+
+.item {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    box-shadow: 4px 4px 8px rgba(127, 134, 146, 0.8), -4px -4px 8px rgba(221, 215, 215, 0.8);
+    border-radius: 5px;
+    margin: 15px;
+}
+
+.item-aprobado {
+    border: 2px solid green;
+}
+
+.item-rechazado {
+    border: 2px solid red;
+}
+
+.item span:nth-child(1) {
+    font-size: 0.8em; 
+}
+
+.custom-droplet{
+    font-size: 1.7em; 
+    color: rgb(0, 76, 171);
+    background-color: #ddd;
+    padding: 3px;
+    border-radius: 10%;
+
+}
+.custom-droplet1{
+    font-size: 1.7em; 
+    color: rgb(107, 2, 107);
+    background-color: #ddd;
+    padding: 3px; 
+    border-radius: 10%;
+
+}
+.custom-droplet2{
+    font-size: 1.7em; 
+    color: rgb(255, 140, 0);
+    background-color: #ddd;
+    padding: 3px;
+    border-radius: 10%;
+    
+}
+.custom-droplet3{
+    font-size: 1.7em;
+    color: rgb(101, 67, 33);
+    background-color: #ddd;
+    padding: 3px; 
+    border-radius: 10%;
+    margin: 20px;
+}
+.custom-droplet4 {
+    font-size: 1.7em; 
+    background-color: #ddd;
+    padding: 3px; 
+    border-radius: 10%;
+    
+}
+
+.custom-droplet7 {
+    font-size: 1.7em;
+    color: rgb(139, 69, 19);
+    background-color: #ddd;
+    padding: 5px;
+    border-radius: 10%;
+    
+  }
+  
+  .custom-droplet5 {
+    font-size: 1.7em;
+    color:  rgb(0, 128, 0);
+    background-color: #ddd;
+    padding: 5px;
+    border-radius: 10%;
+    
+  }
+  
+  .custom-droplet6 {
+    font-size: 1.7em;
+    color: rgb(255, 0, 0);
+    background-color: #ddd;
+    padding: 5px;
+    border-radius: 10%;
+    
+  }
+
+.custom-droplet4-rechazado {
+    color: red !important;
+}
+
+.custom-droplet4-aprobado {
+    color: green !important;
+}
+
+.nombre {
+    padding-bottom: 3px; 
+    color: rgb(106, 115, 123);
+    text-align: center;
+    font-size: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.cantidad {
+    font-size: 1em;
+    padding-bottom: 1%;
+    color: rgb(106, 115, 123);
+    margin-left: 10px;
+    margin-right: 10px;
+    
+}
+
+.card {
+    box-shadow: 4px 4px 8px rgba(127, 134, 146, 0.8), -4px -4px -8px rgba(221, 215, 215, 0.8);
+    border-radius: 5px;
+}
+
+
+
+
+
+.adjuntos-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px;
+  }
+  
+  .adjuntos-item {
+    margin-bottom: 10px;
+  }
+  
+  .adjuntos-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 400;
+    color:rgb(106,115,123);
+    font-size: 12px;
+  }
+  
+  .adjuntos-button {
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .adjuntos-button:hover {
+    background-color: #0056b3;
+  }
+
+
+
+
+
+
+
+.row-indicadores {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.col-indicadores {
+    flex: 0 0 15%; 
+    max-width: 15%;
+    padding: 3px;
+}
+
+.card-indicadores {
+    cursor: pointer;
+    border: 1px solid black;
+    width: 100%; 
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff;
+    word-break: break-word; 
+    overflow: hidden; 
+}
+
+.card-indicadores span {
+    margin-bottom: 8px;
+}
+
+.card-indicadores:hover {
+    background-color: #f0f0f0;
+    border-color:  #0056b3;
+}
+
+.card-indicadores.card-selected {
+    border: 1px solid #0056b3;
+    background-color: #e0ffe0; 
+}
+
+
+
+
+
+
+/* Encabezado de la Tabla */
+.table-custom thead th {
+    background-color:  rgb(6,81,163); 
+    font-weight: 500; 
+    color: white; 
+    border: 1px solid #ddd; 
+  }
+  
+  .table-custom tbody .borde-rechazado-td,
+  .table-custom tbody .borde-rechazado-td:hover {
+      box-shadow: inset 0px 0px 8px rgba(255, 0, 0, 0.8); 
+  }
+  
+  .table-custom tbody .borde-aprobado-td,
+  .table-custom tbody .borde-aprobado-td:hover {
+      box-shadow: inset 0px 0px 8px rgba(0, 255, 0, 0.8); 
+  }
+
+  .sticky-header th {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 10;
+  }
+
+
+.estado-aprobado {
+    box-shadow: inset 0px 0px 8px rgba(0, 255, 0, 0.8);
+}
+
+.estado-rechazado {
+    box-shadow: inset 0px 0px 8px rgba(255, 0, 0, 0.8);
+}
+
+
+.table-custom tr:hover td.estado-aprobado {
+    box-shadow: inset 0px 0px 8px rgba(0, 255, 0, 0.8);
+}
+
+.table-custom tr:hover td.estado-rechazado {
+    box-shadow: inset 0px 0px 8px rgba(255, 0, 0, 0.8);
+}
+
+.item-rechazado {
+    border: 2px solid red;
+  }
+  
+  .item span:nth-child(1) {
+    font-size: 1em;
+    margin: 10px;
+  }
+
+
+/* INDICADOR COSTADO DE NAVE */
+.aprobado {
+    color: rgb(106, 115, 123);
+}
+
+.rechazado {
+    color: rgb(106, 115, 123);
+}
+
+.aprobado-icono {
+    color: green;
+}
+
+.rechazado-icono {
+    color: red;
+}
+
+.aprobado-border {
+    border: 2px solid green;
+}
+
+.rechazado-border {
+    border: 2px solid red;
+}
+
+
+
+

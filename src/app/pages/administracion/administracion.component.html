@@ -1,0 +1,265 @@
+<app-header></app-header>
+<div class="contenedor">
+    <div class="row">
+        <div class="col" style="margin-top: 5px;">
+            <h2 style="color:rgb(106,115,123);">{{cargo}}: {{nombreUsuario}} {{apellido}}</h2>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="d-flex mb-8" style="gap: 10px; margin-bottom: 10px;">
+            <button type="button" class="btn btn-secondary" style="font-weight: 400;" (click)="modalUsuario(modalnew)">AGREGAR USUARIO</button>
+            <button type="button" class="btn btn-secondary" style="font-weight: 400;" (click)="modalCambios(modalAutorizar)">AUTORIZAR CAMBIOS</button>
+            <button *ngIf="correo === 'mario.castillo@alsglobal.com'" type="button" class="btn btn-secondary" style="font-weight: 400;" (click)="modalCliente(modalVistaCliente)">AUTORIZAR VISTA CLIENTE</button>
+            <button type="button" class="btn btn-secondary" style="font-weight: 400;" (click)="modalMovimientos(modalListarMovimientos)">HISTORIAL DE CAMBIOS</button>
+        </div>
+    </div>
+    <table datatable [dtOptions]="dtOptionsUsuario" [dtTrigger]="dtTriggerUsuario"
+        class="table table-striped table-bordered row-border hover table-custom">
+        <thead>
+            <tr>
+                <th>NOMBRE</th>
+                <th>APELLIDO</th>
+                <th>CORREO</th>
+                <th>TELÉFONO</th>
+                <th>USUARIO</th>
+                <th>ESTADO</th>
+                <th>ACCIÓN</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let u of usuarios">
+                <td>{{u.nombre}}</td>
+                <td>{{u.apellido}}</td>
+                <td>{{u.correo}}</td>
+                <td>{{u.telefono}}</td>
+                <td>{{u.cargo}}</td>
+                <td>{{u.estado}}</td>
+                <td style="display: flex; gap: 1em;">
+                    <div>
+                        <mat-icon (click)="edit(modaledit, u.idUsuario)">edit</mat-icon>
+                    </div>
+                    <div>
+                        <i class="fa-solid fa-user-slash custom-icon-size" 
+                           [class.fa-user-check]="u.estado === 'Activado'" 
+                           [class.fa-user-slash]="u.estado !== 'Activado'" 
+                           (click)="toggleUser(modalremove, u.idUsuario, u.estado, u.nombre)">
+                        </i>
+                    </div>
+                </td>
+            
+        </tbody>
+    </table>
+</div>
+
+ <!-- Nuevo Empleado -->
+ <ng-template #modalnew let-modal>
+    <div class="modal-header">
+    <div class="modal-title">Nuevo Usuario</div>
+    <button class="close" aria-label="close" type="button" (click)="closeModalNuevo()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+    <form (ngSubmit)="saveUsuario()" [formGroup]="frmSaveUsuario">
+    <div class="modal-body">
+        <div class="row">
+        <div class="col-sm">
+            <label class="form-label">Nombre <span class="asteric" title="Requerido">*</span></label>
+            <input type="text" formControlName="nombre" class="form-control">
+            <label class="form-label">Apellido <span class="asteric" title="Requerido">*</span></label>
+            <input type="text" formControlName="apellido" class="form-control">
+            <label class="form-label">Correo <span class="asteric" title="Requerido">*</span></label>
+            <input type="text" formControlName="correo" class="form-control">
+        </div>
+        <div class="col-sm">
+            <label class="form-label">Cargo<span class="asteric" title="Requerido">*</span></label>
+            <select formControlName="cargo"  class="form-select">
+            <option [value]="item.idCargo" *ngFor="let item of cargos">{{item.cargo}}</option>
+            </select>
+            <label class="form-label">Teléfono</label>
+            <input type="number" formControlName="telefono" class="form-control">
+            <label class="form-label">Contraseña</label>
+            <input type="text" formControlName="password" class="form-control">
+        </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-secondary" [disabled]="!frmSaveUsuario.valid">Guardar</button>
+    </div>
+    </form>
+</ng-template>
+
+<!--Editar empleado-->
+<ng-template #modaledit let-modal>
+<div class="modal-header">
+    <div class="modal-title">Editar Usuario</div>
+    <button class="close" aria-label="close" type="button" (click)="closeModal()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form [formGroup]="frmEdit">
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm">
+                <label class="form-label">Nombre <span class="asteric" title="Requerido">*</span></label>
+                <input type="text" formControlName="nombre" class="form-control" autocomplete="name">
+                <label class="form-label">Apellido <span class="asteric" title="Requerido">*</span></label>
+                <input type="text" formControlName="apellido" class="form-control" autocomplete="family-name">
+                <label class="form-label">Correo <span class="asteric" title="Requerido">*</span></label>
+                <input type="text" formControlName="correo" class="form-control">
+            </div>
+            <div class="col-sm">
+                <label class="form-label">Cargo<span class="asteric" title="Requerido">*</span></label>
+                <select formControlName="idCargo" name="idCargo" class="form-select">
+                    <option [value]="item.idCargo" *ngFor="let item of cargos">{{item.cargo}}</option>
+                </select>
+                <label class="form-label">Teléfono</label>
+                <input type="text" formControlName="telefono" class="form-control"autocomplete="tel" autocomplete="email">
+                <label class="form-label">Contraseña</label>
+                <input type="password" formControlName="password" class="form-control" placeholder="***********" autocomplete="new-password">
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" [disabled]="!frmEdit.valid" (click)="editUsuario()">Editar</button>
+    </div>
+</form>
+</ng-template>
+
+<!--DESACTIVAR USUARIO-->
+<ng-template #modalremove let-modal>
+    <div class="modal-body">
+        ¿{{actionText}} al usuario: {{nombreUsuario}}?
+    </div>
+    <div class="modal-footer mx-auto">
+        <button type="button" class="btn btn-success" (click)="closeModal()">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="toggleUserStatus()">{{actionText}}</button>
+    </div>
+</ng-template>
+
+
+<ng-template #modalListarMovimientos let-modal>
+    <div class="modal-header">
+        <div class="modal-title">LISTADO DE EDICIONES Y ELIMINACIÓN DE CONTENIDO</div>
+        <button class="close" aria-label="close" type="button" (click)="closeModalListarMovimientos()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col">
+                <table datatable [dtOptions]="dtOptionsListarCambios" class="table table-striped table-bordered row-border hover table-custom">
+                    <thead class="sticky-header">
+                        <tr>
+                            <th>FECHA</th>                    
+                            <th>LUGAR</th>
+                            <th>DATOS ORIGINALES</th>
+                            <th>DATOS EDITADOS</th>
+                            <th>INGRESADOS POR</th>
+                            <th>EDITADOS POR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let n of listadoCambios">
+                          <td>{{n.fechaHora}}</td>
+                          <td>{{n.tabla}}</td>
+                          <td>{{n.dato}}</td>
+                          <td>{{n.datocambiadopor}}</td>
+                          <td>{{n.nombreUsuarioRegistrado}}</td>
+                          <td>{{n.nombreUsuarioEditor}}</td>
+                        </tr>
+                    </tbody>
+                </table>               
+            </div>         
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #modalAutorizar let-modal>
+    <div class="modal-header">
+        <div class="modal-title">AUTORIZAR EDICIONES EN PROCESOS FINALIZADOS</div>
+        <button class="close" aria-label="close" type="button" (click)="closeModalAutorizar()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col">
+                <table datatable [dtOptions]="dtOptionsAutorizar" class="table table-striped table-bordered row-border table-custom">
+                    <thead class="sticky-header">
+                        <tr>
+                            <th>ACCIÓN A REALIZAR</th>                    
+                            <th>TABLAS INVOLUCRADAS</th>
+                            <th>ESTADO SOLICITUD</th>
+                            <th>FECHA SOLICITUD</th>
+                            <th>USUARIO</th>
+                            <th>ACCIÓN</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let n of listadoAutorizaciones">
+                            <td>{{n.tipoAccion}}</td>
+                            <td>{{n.tabla}}</td>
+                            <td>{{n.estado}}</td>
+                            <td>{{n.fechaSolicitud}}</td>
+                            <td>{{n.nombre}}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                  <button type="button" class="btn btn-success btn-sm" (click)="autorizar(n.idNotificacion)" style="margin-right: 10px;">Autorizar</button>
+                                  <button type="button" class="btn btn-danger btn-sm" (click)="rechazar(n.idNotificacion)">Rechazar</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>               
+            </div>         
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalVistaCliente let-modal>
+    <div class="modal-header">
+        <div class="modal-title">AUTORIZAR PROCESOS VISTA CLIENTE</div>
+        <button class="close" aria-label="close" type="button" (click)="closeModalAutorizarVistaCliente()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col">
+                <table datatable [dtOptions]="dtOptionsCliente" class="table table-striped table-bordered row-border table-custom">
+                    <thead class="sticky-header">
+                        <tr>
+                            <th>PROCESO</th>                    
+                            <th>ESTADO</th>
+                            <th>N° NOMINACION</th>
+                            <th>LOTE</th>
+                            <th>USUARIO</th>
+                            <th>ACCIÓN</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let n of listadoVistaCliente">
+                            <td>{{n.proceso}}</td>
+                            <td>{{n.estado}}</td>
+                            <td>{{n.numeroNominacion}}</td>
+                            <td>{{n.orden}}</td>
+                            <td>{{n.nombre}}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                  <button type="button" class="btn btn-success btn-sm" (click)="autorizarVistaCliente(n.idVista)" style="margin-right: 10px;">Autorizar</button>
+                                  <button type="button" class="btn btn-danger btn-sm" (click)="rechazarVistaClieste(n.idVista)">Rechazar</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>               
+            </div>         
+        </div>
+    </div>
+</ng-template>
+
+
+

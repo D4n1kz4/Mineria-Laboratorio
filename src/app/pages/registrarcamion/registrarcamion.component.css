@@ -1,0 +1,140 @@
+.custom-input3{
+    width: 60%;
+  }
+
+.custom-input2{
+  width: 60%;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  box-shadow: 4px 4px 8px rgba(127, 134, 146, 0.8), -4px -4px 8px rgba(221, 215, 215, 0.8);
+  border-radius: 5px;
+  padding: 5px;
+  margin: 10px;
+}
+
+.item span:nth-child(1) {
+  font-size: 0.9em;
+  margin: 10px;
+}
+
+.custom-droplet1 {
+  font-size: 1.7em;
+  color: rgb(0, 0, 0);
+  background-color: #ddd;
+  padding: 5px;
+  border-radius: 10%;
+}
+.custom-droplet2 {
+  font-size: 1.7em;
+  color: rgb(0, 128, 0);
+  background-color: #ddd;
+  padding: 5px;
+  border-radius: 10%;
+}
+.custom-droplet3 {
+  font-size: 1.7em;
+  color: rgb(255, 0, 0);
+  background-color: #ddd;
+  padding: 5px;
+  border-radius: 10%;
+}
+
+.custom-droplet4 {
+  font-size: 1.7em;
+  color: rgb(139, 69, 19);
+  background-color: #ddd;
+  padding: 5px;
+  border-radius: 10%;
+}
+
+.custom-droplet5 {
+  font-size: 1.7em;
+  color:  rgb(0, 128, 0);
+  background-color: #ddd;
+  padding: 5px;
+  border-radius: 10%;
+}
+
+.custom-droplet6 {
+  font-size: 1.7em;
+  color: rgb(255, 0, 0);
+  background-color: #ddd;
+  padding: 5px;
+  border-radius: 10%;
+}
+
+
+.nombre {
+  padding-bottom: 5px;
+  color: rgb(106, 115, 123);
+  text-align: center;
+  font-size: 12PX;
+}
+
+.cantidad {
+  font-size: 1em;
+  padding-bottom: 1%;
+  color: rgb(106, 115, 123);
+}
+
+.card {
+  width: auto;
+  display: flex;
+  justify-content: space-around;
+  box-shadow: 4px 4px 8px rgba(127, 134, 146, 0.8), -4px -4px -8px rgba(221, 215, 215, 0.8);
+  border-radius: 5px;
+}
+
+
+.table-custom {
+  font-size: 0.9em;
+  border-collapse: collapse;
+  width: 100%;
+  max-height: 400px;
+  overflow-y: auto; 
+}
+
+
+/* Encabezado de la Tabla */
+.table-custom thead th {
+  background-color:  rgb(6,81,163);
+  font-weight: 500;
+  color: white; 
+  border: 1px solid #ddd; 
+}
+
+/* Cuerpo de la Tabla */
+.table-custom tbody td {
+  border: 1px solid #ddd;
+}
+
+
+.table-container {
+  width: 100%; 
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 350px;
+}
+
+.sticky-header th {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
+
+.icon-container {
+  height: 100%;
+}

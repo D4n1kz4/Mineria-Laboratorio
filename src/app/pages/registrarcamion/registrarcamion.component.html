@@ -1,0 +1,274 @@
+<app-header></app-header>
+<div class="contenedor">
+    <div class="row">
+        <div class="col" style="margin-top: 5px;">
+            <h2 style="color:rgb(106,115,123);">{{cargo}}: {{nombre}} {{apellido}}</h2>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="d-flex mb-8" style="gap: 10px; margin-bottom: 10px;">
+            <button type="button" class="btn btn-secondary" style="font-weight: 400;"
+                (click)="setActiveButton('Registrar camión', 'registrarcamion')"
+                [class.active]="isButtonActive('Registrar camión', 'registrarcamion')">REGISTRAR CAMIÓN</button>
+            <button type="button" class="btn btn-secondary" style="font-weight: 400;"
+                (click)="setActiveButton('Listar Camiones', 'listarcamiones')"
+                [class.active]="isButtonActive('Listar Camiones', 'listarcamiones')">LISTAR CAMIONES</button>
+    
+        </div>        
+    </div>
+
+    <div class="row" *ngIf="activeDiv === 'registrarcamion'">
+        <div class="col-5">
+            <label for="exampleDataList" class="form-label" style="color:rgb(106,115,123);">Selecciona N° Nominación</label>
+            <div class="input-group custom-input2">
+                <select class="form-select" aria-label="Default select example" [(ngModel)]="nominacionCamion" (change)="onInput()">
+                    <option *ngFor="let nominacion of nominacionesDB" [value]="nominacion.numeroNominacion">{{nominacion.numeroNominacion}}</option>
+                </select>
+                <button type="button" class="btn btn-secondary" (click)="cleanRegistroCamion()">Limpiar</button>
+            </div>
+            <div style="margin-top: 20px;" *ngIf="lotesCamion && lotesCamion.length > 0">
+                <table datatable style="width: 80%;" [dtOptions]="dtOptionsLotesPila" class="table table-striped table-bordered row-border hover table-custom">
+                    <thead>
+                        <tr>
+                            <th>N° NOMINACIÓN</th>
+                            <th>LOTE</th>
+                            <th>ACCIÓN</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let l of lotesCamion; let i = index">
+                            <td style="width: 40%;">{{l.cliente}}</td>
+                            <td style="width: 30%;">{{l.orden}}</td>
+                            <td style="width: 30%;">
+                                <button type="button" class="btn btn-secondary btn-sm" (click)="selecionarLote(l.idLote, l.orden)">Registrar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-7" *ngIf="idLote">
+            <div style="flex: 1; display: flex; flex-wrap: wrap; margin-right: 10px;">
+                <label style="color:rgb(106,115,123); margin-left: 10px; margin-top: 10px;">Registar Camión</label>
+                <label style="color:rgb(106,115,123); margin-left: 10px; margin-top: 10px;">Lote: {{lote}}</label>
+            </div>
+            <div style="max-height: 400px; overflow-y:auto;">
+                <form [formGroup]="frmRegistrarCamion" (ngSubmit)="registrarCamion()" enctype="multipart/form-data">                
+                    <div class="form-floating mb-2">
+                        <input type="date" class="form-control custom-input3" formControlName="fecha" id="floatingInput6">
+                        <label for="floatingInput6">Fecha</label>
+                    </div>
+                    <div class="form-floating mb-2">
+                        <input type="text" class="form-control custom-input3" formControlName="hora" id="floatingInput1">
+                        <label for="floatingInput1">Hora</label>
+                    </div>
+                    <div *ngIf="frmRegistrarCamion.get('hora')?.touched && frmRegistrarCamion.get('hora')?.invalid">
+                        <small class="text-danger" >
+                          Usar formato hh:mm
+                        </small>
+                    </div>
+                    <div class="form-floating mb-2">
+                        <input type="text" class="form-control custom-input3" formControlName="placa" id="floatingInput2">
+                        <label for="floatingInput2">Placa/Tracto</label>
+                    </div>
+                    <div class="form-floating mb-2" style="margin-top: 10px;">
+                        <input type="number" class="form-control custom-input3" formControlName="bruto" id="floatingInput3">
+                        <label for="floatingInput3">Peso/Bruto</label>
+                    </div>
+                    <div class="form-floating mb-2">
+                        <input type="number" class="form-control custom-input3" formControlName="tara" id="floatingInput4">
+                        <label for="floatingInput4">Peso/Tara</label>
+                    </div>
+                    <div class="form-floating mb-2">
+                        <input type="number" class="form-control custom-input3" formControlName="neto" id="floatingInput5">
+                        <label for="floatingInput5">Peso/Neto</label>
+                    </div>   
+                    <div class="form-floating mb-2">
+                        <input type="text" class="form-control custom-input3" formControlName="tiket" id="floatingInput7">
+                        <label for="floatingInput7">Tiket</label>
+                    </div>    
+                    <button type="submit" class="btn btn-secondary btn-sm" [disabled]="frmRegistrarCamion.invalid">Guardar</button>
+                <br>
+                <br>
+                </form>    
+            </div>           
+        </div>
+    </div>
+
+
+    <div *ngIf="activeDiv === 'listarcamiones'">
+        <div class="row">
+            <div class="col-5">
+                <label for="exampleDataList" class="form-label" style="color:rgb(106,115,123);">Selecciona N° Nominación</label>
+                <div class="input-group custom-input2">
+                    <select class="form-select" aria-label="Default select example" [(ngModel)]="nominacionCamionListar" (change)="onInputListar()">
+                        <option *ngFor="let nominacion of nominacionesDB" [value]="nominacion.numeroNominacion">{{nominacion.numeroNominacion}}</option>
+                    </select>
+                    <button type="button" class="btn btn-secondary" (click)="cleanCamionListar()">Limpiar</button>
+                </div>
+                <div>
+                    <div style="margin-top: 15px;" *ngIf="lotesCamionListar && lotesCamionListar.length > 0">
+                        <table datatable [dtOptions]="dtOptionsLotescamion" class="table table-striped table-bordered row-border hover table-custom">
+                            <thead class="sticky-header">
+                                <tr>
+                                    <th style="width: 40%;">N° NOMINACIÓN</th>
+                                    <th style="width: 30%;">LOTE</th>
+                                    <th style="width: 30%;">LISTAR CAMIONES</th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let l of lotesCamionListar; let i = index">
+                                    <td>{{l.cliente}}</td>
+                                    <td>{{l.orden}}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-secondary btn-sm" (click)="selecionarLoteListar(l.idLote)">Listar</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br>
+                    <div style="max-height:350px; overflow-y:auto;" *ngIf="camiones && camiones.length > 0"> 
+                        <div class="card">
+                            <label for="exampleDataList" class="form-label" style="color:rgb(0,76,171); margin-left: 10px;">Lote: {{lote}}</label>                                   
+                            <div class="container">
+                                <div class="item">
+                                    <span><i class="fa-solid fa-weight-hanging custom-droplet4"></i></span>
+                                    <span  class=" cantidad">{{toneladas | number:'1.0-3'}}</span>
+                                    <span class=" nombre">TONELADAS NOMINACIÓN</span>
+                                </div>
+                                <div class="item">
+                                    <span><i class="fa-solid fa-circle-check custom-droplet5"></i></span>
+                                    <span  class=" cantidad">{{tonregistrados | number:'1.3-3'}}</span>
+                                    <span class=" nombre">INGRESADAS COSATDO DE NAVE</span>
+                                </div>
+                                <div class="item">
+                                    <span><i class="fa-solid fa-square-poll-vertical custom-droplet6"></i></span>
+                                    <span  class=" cantidad">{{tonfaltantes | number:'1.3-3'}}</span>
+                                    <span class=" nombre">TONELADAS FALTANTES</span>
+                                </div>
+                                <div class="item">
+                                    <span><i class="fa-solid fa-truck custom-droplet1"></i></span>
+                                    <span  class=" cantidad">{{numeroCamiones}}</span>
+                                    <span class=" nombre">VIAJES REALIZADOS</span>
+                                </div>
+                            </div> 
+                        </div>                                                                           
+                    </div> 
+                    <div style="width: 70%;" *ngIf="loteSeleccionado && (!camiones || camiones.length === 0)">
+                        <div class="alert alert-info" role="alert">
+                            No hay camiones registrados para el lote seleccionado.
+                        </div>
+                    </div>           
+                </div>    
+            </div>
+            <div class="col-7">
+                <div  *ngIf="camiones && camiones.length > 0">
+                    <div >
+                        <div style="display: flex; margin-bottom: 20px;">
+                            <button type="button" class="btn btn-secondary btn-lm" (click)="solicitarVistaCliente()" 
+                            [disabled]="estadoVistacliente[idLotListar] === 'Pendiente' || estadoVistacliente[idLotListar] === 'Aprobado' ">
+                            Vista cliente: {{estadoVistacliente[idLotListar] || 'Solicitar' }}</button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-secondary btn-lm" (click)="exportToExcel(camiones, 'camiones')">Exportar Camiones a Excel</button>
+                        </div>
+                    </div>
+                    <table datatable [dtOptions]="dtOptionsListarcamiones" class="table table-striped table-bordered row-border hover  table-custom">
+                        <thead class="sticky-header">
+                            <tr>
+                                <th>N°</th>
+                                <th>FECHA</th>
+                                <th>HORA</th>
+                                <th>PLACA</th>
+                                <th>PESO BRUTO</th>
+                                <th>PESO TARA</th>
+                                <th>PESO NETO</th>
+                                <th>ACUM.</th>
+                                <th>TIKET</th> 
+                                <th>ACCIÓN </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let l of camiones; let i = index">
+                                <td>{{ i + 1 }}</td>
+                                <td>{{l.fecha}}</td>
+                                <td>{{l.hora}}</td>
+                                <td>{{l.placa}}</td>
+                                <td>{{l.bruto}}</td>
+                                <td>{{l.tara}}</td>
+                                <td>{{l.neto}}</td>
+                                <td>{{calculaAcumulado(i) | number:'1.3-3'}}</td>
+                                <td>{{l.tiket}}</td>   
+                                <td>
+                                    <mat-icon (click)="editarCamiones(modalEditCamiones, l.idRegistro)" style="margin-right: 5px;">edit</mat-icon>
+                                    <mat-icon (click)="eliminarCamiones(modalremoveCamion, l.idRegistro)">delete</mat-icon>
+                                </td>                                                                                                        
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>                                              
+            </div>
+        </div>       
+    </div>
+</div>
+
+<ng-template #modalEditCamiones let-modal>
+    <div class="modal-header">
+        <div class="modal-title">Editar resultado costado de nave.</div>
+        <mat-icon style="color: white; background-color: gray; border-radius: 50%;" (click)="closeModalCamiones()">close</mat-icon>
+    </div>
+    <form [formGroup]="frmRegistrarCamionEdit" (ngSubmit)="editCamiones()">
+        <div class="modal-body">
+            <div class="form-floating mb-2">
+                <input type="date" class="form-control custom-input4" formControlName="fechaEdit" id="floatingInput6">
+                <label for="floatingInput6">Fecha</label>
+            </div>
+            <div class="form-floating mb-2">
+                <input type="text" class="form-control custom-input4" formControlName="horaEdit" id="floatingInput1">
+                <label for="floatingInput1">Hora</label>
+            </div>
+            <div *ngIf="frmRegistrarCamion.get('hora')?.touched && frmRegistrarCamion.get('hora')?.invalid">
+                <small class="text-danger">
+                    Usar formato hh:mm
+                </small>
+            </div>
+            <div class="form-floating mb-2">
+                <input type="text" class="form-control custom-input4" formControlName="placaEdit" id="floatingInput2">
+                <label for="floatingInput2">Placa/Tracto</label>
+            </div>
+            <div class="form-floating mb-2" style="margin-top: 10px;">
+                <input type="number" class="form-control custom-input4" formControlName="brutoEdit" id="floatingInput3">
+                <label for="floatingInput3">Peso/Bruto</label>
+            </div>
+            <div class="form-floating mb-2">
+                <input type="number" class="form-control custom-input4" formControlName="taraEdit" id="floatingInput4">
+                <label for="floatingInput4">Peso/Tara</label>
+            </div>
+            <div class="form-floating mb-2">
+                <input type="number" class="form-control custom-input4" formControlName="netoEdit" id="floatingInput5">
+                <label for="floatingInput5">Peso/Neto</label>
+            </div>   
+            <div class="form-floating mb-2">
+                <input type="text" class="form-control custom-input4" formControlName="tiketEdit" id="floatingInput7">
+                <label for="floatingInput7">Tiket</label>
+            </div>    
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-secondary btn-sm" [disabled]="frmRegistrarCamionEdit.invalid">Editar</button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #modalremoveCamion let-modal>
+    <div class="modal-body">
+        ¿Está seguro que desea eliminar el camión? 
+    </div>
+    <div class="modal-footer mx-auto">
+        <button type="button" class="btn btn-success" (click)="closeModalDElete()">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="deleteCamion()">Elminar</button>
+    </div>
+</ng-template>
