@@ -177,7 +177,7 @@
                               <td style="text-align: center; font-size: 0.95em;">{{ calcularPorcentajeHumedad(fila) || 0 }}</td>
                           </ng-container>
                           <ng-template #emptyCellHumedad><td></td></ng-template>
-                          <td style="text-align: center; font-size: 0.95em;" *ngIf="i % 2 == 1">{{ fila.promedioHumedad | number:'1.2-2' || 0}}</td>
+                          <td style="text-align: center; font-size: 0.95em;" *ngIf="i % 2 == 1">{{ (fila.promedioHumedad || 0) | number:'1.2-2' }}</td>
                           <td style="text-align: center; font-size: 0.95em;" *ngIf="i % 2 == 0"></td>
                           <td style="text-align: center; font-size: 0.95em;" *ngIf="i % 2 == 0">
                               {{fila.estado}}

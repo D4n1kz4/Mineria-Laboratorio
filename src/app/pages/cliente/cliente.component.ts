@@ -12,9 +12,10 @@ import { ChangeDetectorRef } from '@angular/core';
 import { NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-cliente',
-  templateUrl: './cliente.component.html',
-  styleUrls: ['./cliente.component.css']
+    selector: 'app-cliente',
+    templateUrl: './cliente.component.html',
+    styleUrls: ['./cliente.component.css'],
+    standalone: false
 })
 export class ClienteComponent {
   @ViewChild (DataTableDirective, {static : false}) dtElement!: DataTableDirective;

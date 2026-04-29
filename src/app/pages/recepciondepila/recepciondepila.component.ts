@@ -12,9 +12,10 @@ import { AdmninistracionService } from 'src/app/services/admninistracion.service
 
 
 @Component({
-  selector: 'app-recepciondepila',
-  templateUrl: './recepciondepila.component.html',
-  styleUrls: ['./recepciondepila.component.css'],
+    selector: 'app-recepciondepila',
+    templateUrl: './recepciondepila.component.html',
+    styleUrls: ['./recepciondepila.component.css'],
+    standalone: false
 })
 export class RecepciondepilaComponent implements OnInit, AfterViewInit, OnDestroy{
   @ViewChild (DataTableDirective, {static : false}) dtElement!: DataTableDirective;

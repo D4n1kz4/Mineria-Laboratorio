@@ -29,9 +29,10 @@ interface FilaDeterminacionHumedad {
 }
 
 @Component({
-  selector: 'app-laboratorio',
-  templateUrl: './laboratorio.component.html',
-  styleUrls: ['./laboratorio.component.css']
+    selector: 'app-laboratorio',
+    templateUrl: './laboratorio.component.html',
+    styleUrls: ['./laboratorio.component.css'],
+    standalone: false
 })
 export class LaboratorioComponent{
   @ViewChild (DataTableDirective, {static : false}) dtElement!: DataTableDirective;

@@ -9,9 +9,10 @@ import { AdmninistracionService } from 'src/app/services/admninistracion.service
 import { SafeHtml, DomSanitizer } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-administracion',
-  templateUrl: './administracion.component.html',
-  styleUrls: ['./administracion.component.css']
+    selector: 'app-administracion',
+    templateUrl: './administracion.component.html',
+    styleUrls: ['./administracion.component.css'],
+    standalone: false
 })
 export class AdministracionComponent {
 @ViewChild( DataTableDirective, {static : false})

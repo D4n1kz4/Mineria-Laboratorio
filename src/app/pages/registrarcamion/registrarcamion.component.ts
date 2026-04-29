@@ -13,9 +13,10 @@ import * as XLSX from 'xlsx';
 
 
 @Component({
-  selector: 'app-registrarcamion',
-  templateUrl: './registrarcamion.component.html',
-  styleUrls: ['./registrarcamion.component.css']
+    selector: 'app-registrarcamion',
+    templateUrl: './registrarcamion.component.html',
+    styleUrls: ['./registrarcamion.component.css'],
+    standalone: false
 })
 export class RegistrarcamionComponent {
   @ViewChild (DataTableDirective, {static : false}) dtElement!: DataTableDirective;

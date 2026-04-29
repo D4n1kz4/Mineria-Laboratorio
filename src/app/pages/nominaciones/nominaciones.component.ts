@@ -13,9 +13,10 @@ import { AdmninistracionService } from 'src/app/services/admninistracion.service
 import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
-  selector: 'app-nominaciones',
-  templateUrl: './nominaciones.component.html',
-  styleUrls: ['./nominaciones.component.css']
+    selector: 'app-nominaciones',
+    templateUrl: './nominaciones.component.html',
+    styleUrls: ['./nominaciones.component.css'],
+    standalone: false
 })
 export class NominacionesComponent {
   @ViewChild(DataTableDirective, { static: false })

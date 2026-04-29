@@ -16,9 +16,10 @@ interface Archivo {
 }
 
 @Component({
-  selector: 'app-costadonave',
-  templateUrl: './costadonave.component.html',
-  styleUrls: ['./costadonave.component.css']
+    selector: 'app-costadonave',
+    templateUrl: './costadonave.component.html',
+    styleUrls: ['./costadonave.component.css'],
+    standalone: false
 })
 export class CostadonaveComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild (DataTableDirective, {static : false}) dtElement!: DataTableDirective;
